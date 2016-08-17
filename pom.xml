@@ -17,7 +17,7 @@ The library provides some proxy setting search strategies to read the proxy sett
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
+        <version>3.0.2</version>
         <configuration>
           <!--stylesheetfile>resources/misc/stylesheet.css</stylesheetfile-->
         </configuration>
@@ -26,7 +26,7 @@ The library provides some proxy setting search strategies to read the proxy sett
       <plugin>
       <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
+        <version>3.0.2</version>
         <configuration>
           <includes>
             <include>**/*.java</include>
@@ -38,7 +38,7 @@ The library provides some proxy setting search strategies to read the proxy sett
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.0.2</version>
         <configuration>
           <archive>
             <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
@@ -59,7 +59,7 @@ The library provides some proxy setting search strategies to read the proxy sett
   	<dependency>
   		<groupId>junit</groupId>
   		<artifactId>junit</artifactId>
-  		<version>4.11</version>
+  		<version>4.12</version>
   	</dependency>
   </dependencies>
 </project>

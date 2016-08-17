@@ -58,17 +58,14 @@ public class ProxyTester extends JFrame {
 		setTitle("Proxy Vole Tester");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JPanel p = new JPanel();
-
-		p.add(new JLabel("Mode:"));
-
+		JPanel jPanel = new JPanel();
+		jPanel.add(new JLabel("Mode:"));
 		this.modes = new JComboBox(ProxySearch.Strategy.values());
-		p.add(this.modes);
-
-		p.add(new JLabel("URL:"));
+		jPanel.add(this.modes);
+		jPanel.add(new JLabel("URL:"));
 		this.urlField = new JTextField(30); 
 		this.urlField.setText("http://code.google.com/p/proxy-vole/");
-		p.add(this.urlField);
+		jPanel.add(this.urlField);
 		
 		this.testButton = new JButton("Test");
 		this.testButton.addActionListener(new ActionListener() {
@@ -76,11 +73,11 @@ public class ProxyTester extends JFrame {
 				testUrl();
 			}
 		});
-		p.add(this.testButton);
+		jPanel.add(this.testButton);
 
-		this.logArea = new JTextArea(5, 50);
+		this.logArea = new JTextArea(10, 50);
 		JPanel contenPane = new JPanel(new BorderLayout());
-		contenPane.add(p, BorderLayout.NORTH);
+		contenPane.add(jPanel, BorderLayout.NORTH);
 		contenPane.add(new JScrollPane(this.logArea), BorderLayout.CENTER);
 		setContentPane(contenPane);
 

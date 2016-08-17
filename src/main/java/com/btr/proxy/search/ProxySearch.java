@@ -228,12 +228,13 @@ public class ProxySearch implements ProxySearchStrategy {
 	 ************************************************************************/
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("Proxy search: ");
+		StringBuilder stringBuilder = new StringBuilder("Proxy search: ");
 		for (ProxySearchStrategy strat : this.strategies) {
-			sb.append(strat);
-			sb.append(" ");
+			stringBuilder.append(strat);
+			stringBuilder.append(" ");
 		}
-		return sb.toString();
+		
+		return stringBuilder.toString();
 	}
 	
 	/*************************************************************************
@@ -242,19 +243,25 @@ public class ProxySearch implements ProxySearchStrategy {
 	 ************************************************************************/
 	
 	public static void main(String[] args) {
-		ProxySearch ps = ProxySearch.getDefaultProxySearch();
+		ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
 		Logger.setBackend(new LogBackEnd() {
 		
+			/**
+			 * @see com.btr.proxy.util.Logger.LogBackEnd#log(java.lang.Class, com.btr.proxy.util.Logger.LogLevel, java.lang.String, java.lang.Object[])
+			 */
 			public void log(Class<?> clazz, LogLevel loglevel, String msg,
 					Object... params) {
 				System.out.println(MessageFormat.format(msg, params));
 			}
 		
+			/**
+			 * @see com.btr.proxy.util.Logger.LogBackEnd#isLogginEnabled(com.btr.proxy.util.Logger.LogLevel)
+			 */
 			public boolean isLogginEnabled(LogLevel logLevel) {
 				return true;
 			}
 		});
-		ps.getProxySelector();
+		proxySearch.getProxySelector();
 	}
 
 }

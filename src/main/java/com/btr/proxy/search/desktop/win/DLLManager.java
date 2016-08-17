@@ -146,21 +146,23 @@ final class DLLManager {
 	 ************************************************************************/
 	
 	static void copy(InputStream source, OutputStream dest)
-			throws IOException {
-		try {
-			byte[] buffer = new byte[1024];
-			int read = 0;
-			while (read >= 0) {
-				dest.write(buffer, 0, read);
-				read = source.read(buffer);
+throws IOException {
+		if(source != null && dest != null) {
+			try {
+				byte[] buffer = new byte[1024];
+				int read = 0;
+				while(read >= 0) {
+					dest.write(buffer, 0, read);
+					read = source.read(buffer);
+				}
+				dest.flush();
+			} finally {
+				closeStream(source);
+				closeStream(dest);
 			}
-			dest.flush();
-		} finally {
-			closeStream(source);
-			closeStream(dest);
 		}
-	}
 
+}	
 	/*************************************************************************
 	 * @return the name of the dll valid for the current architecture.
 	 ************************************************************************/
