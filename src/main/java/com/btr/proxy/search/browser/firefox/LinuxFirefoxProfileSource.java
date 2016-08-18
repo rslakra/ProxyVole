@@ -25,6 +25,7 @@ class LinuxFirefoxProfileSource implements FirefoxProfileSource {
 		Logger.log(getClass(), LogLevel.TRACE, "Firefox settings userDir is {0}", userDir);
 		
 		File cfgDir = new File(userDir, ".mozilla" + File.separator + "firefox" + File.separator);
+		Logger.log(getClass(), LogLevel.TRACE, "Firefox config dir is: {0}", cfgDir);
 		if(!cfgDir.exists()) {
 			Logger.log(getClass(), LogLevel.DEBUG, "Firefox settings folder not found!");
 			return null;

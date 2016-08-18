@@ -34,15 +34,15 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 * 
 	 * @see com.btr.proxy.search.ProxySearchStrategy#getProxySelector()
 	 ************************************************************************/
-	
 	public ProxySelector getProxySelector() throws ProxyException {
 		Logger.log(getClass(), LogLevel.TRACE, "Detecting IE proxy settings");
 		Win32IESettings ieSettings = readSettings();
-		ProxySelector result = createPacSelector(ieSettings);
-		if(result == null) {
-			result = createFixedProxySelector(ieSettings);
+		ProxySelector proxySelector = createPacSelector(ieSettings);
+		if(proxySelector == null) {
+			proxySelector = createFixedProxySelector(ieSettings);
 		}
-		return result;
+		
+		return proxySelector;
 	}
 	
 	/*************************************************************************
@@ -64,31 +64,33 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 ************************************************************************/
 	
 	private PacProxySelector createPacSelector(Win32IESettings ieSettings) {
-		String pacUrl = null;
-		
+		PacProxySelector pacProxySelector = null;
+		String pacFileUrl = null;
 		if(ieSettings.isAutoDetect()) {
 			Logger.log(getClass(), LogLevel.TRACE, "Autodetecting script URL.");
 			// This will take some time.
-			pacUrl = new Win32ProxyUtils().winHttpDetectAutoProxyConfigUrl(Win32ProxyUtils.WINHTTP_AUTO_DETECT_TYPE_DHCP + Win32ProxyUtils.WINHTTP_AUTO_DETECT_TYPE_DNS_A);
-		}
-		if(pacUrl == null) {
-			pacUrl = ieSettings.getAutoConfigUrl();
+			pacFileUrl = new Win32ProxyUtils().winHttpDetectAutoProxyConfigUrl(Win32ProxyUtils.WINHTTP_AUTO_DETECT_TYPE_DHCP + Win32ProxyUtils.WINHTTP_AUTO_DETECT_TYPE_DNS_A);
 		}
 		
-		Logger.log(getClass(), LogLevel.TRACE, "IE uses script:" + pacUrl);
-		if(pacUrl != null && pacUrl.trim().length() > 0) {
+		if(pacFileUrl == null) {
+			pacFileUrl = ieSettings.getAutoConfigUrl();
+		}
+		
+		Logger.log(getClass(), LogLevel.TRACE, "IE uses pacFileUrl:" + pacFileUrl);
+		if(pacFileUrl != null && pacFileUrl.trim().length() > 0) {
 			/*
 			 * Fix for issue 9. If the IE has a file URL and it only starts has
 			 * 2 slashes, add a third so it can be properly converted to the URL
 			 * class
 			 */
-			if(pacUrl.startsWith("file://") && !pacUrl.startsWith("file:///")) {
-				pacUrl = "file:///" + pacUrl.substring(7);
+			if(pacFileUrl.startsWith("file://") && !pacFileUrl.startsWith("file:///")) {
+				pacFileUrl = "file:///" + pacFileUrl.substring(7);
 			}
-			return ProxyUtil.buildPacSelectorForUrl(pacUrl);
+			
+			pacProxySelector = ProxyUtil.buildPacSelectorForUrl(pacFileUrl);
 		}
 		
-		return null;
+		return pacProxySelector;
 	}
 	
 	/*************************************************************************
@@ -98,7 +100,6 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 * @return a ProxySelector, null if no settings are set.
 	 * @throws ProxyException on error.
 	 ************************************************************************/
-	
 	private ProxySelector createFixedProxySelector(Win32IESettings ieSettings) throws ProxyException {
 		String proxyString = ieSettings.getProxy();
 		String bypassList = ieSettings.getProxyBypass();
@@ -107,17 +108,16 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 		}
 		Logger.log(getClass(), LogLevel.TRACE, "IE uses manual settings: {0} with bypass list: {1}", proxyString, bypassList);
 		
-		Properties p = parseProxyList(proxyString);
+		Properties proxyProperties = parseProxyList(proxyString);
+		ProtocolDispatchSelector protocolDispatcher = new ProtocolDispatchSelector();
+		addSelectorForProtocol(proxyProperties, "http", protocolDispatcher);
+		addSelectorForProtocol(proxyProperties, "https", protocolDispatcher);
+		addSelectorForProtocol(proxyProperties, "ftp", protocolDispatcher);
+		addSelectorForProtocol(proxyProperties, "gopher", protocolDispatcher);
+		addSelectorForProtocol(proxyProperties, "socks", protocolDispatcher);
+		addFallbackSelector(proxyProperties, protocolDispatcher);
 		
-		ProtocolDispatchSelector ps = new ProtocolDispatchSelector();
-		addSelectorForProtocol(p, "http", ps);
-		addSelectorForProtocol(p, "https", ps);
-		addSelectorForProtocol(p, "ftp", ps);
-		addSelectorForProtocol(p, "gopher", ps);
-		addSelectorForProtocol(p, "socks", ps);
-		addFallbackSelector(p, ps);
-		
-		ProxySelector result = setByPassListOnSelector(bypassList, ps);
+		ProxySelector result = setByPassListOnSelector(bypassList, protocolDispatcher);
 		return result;
 	}
 	
@@ -179,7 +179,6 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 * @param protocol to create a selector for.
 	 * @param ps to install the created selector on.
 	 ************************************************************************/
-	
 	private void addSelectorForProtocol(Properties settings, String protocol, ProtocolDispatchSelector ps) {
 		String proxy = settings.getProperty(protocol);
 		if(proxy != null) {
@@ -195,21 +194,21 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 * @return Properties with separated settings.
 	 * @throws ProxyException on parse error.
 	 ************************************************************************/
-	
 	private Properties parseProxyList(String proxyString) throws ProxyException {
-		Properties p = new Properties();
+		Properties proxyProperties = new Properties();
 		if(proxyString.indexOf('=') == -1) {
-			p.setProperty("default", proxyString);
+			proxyProperties.setProperty("default", proxyString);
 		} else {
 			try {
 				proxyString = proxyString.replace(';', '\n');
-				p.load(new ByteArrayInputStream(proxyString.getBytes("ISO-8859-1")));
+				proxyProperties.load(new ByteArrayInputStream(proxyString.getBytes("ISO-8859-1")));
 			} catch(IOException e) {
 				Logger.log(getClass(), LogLevel.ERROR, "Error reading IE settings as properties: {0}", e);
 				throw new ProxyException(e);
 			}
 		}
-		return p;
+		
+		return proxyProperties;
 	}
 	
 }

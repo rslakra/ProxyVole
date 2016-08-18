@@ -70,10 +70,10 @@ public class PacProxySelector extends ProxySelector {
 	private void selectEngine(PacScriptSource pacSource) {
 		try {
 			if(this.JAVAX_PARSER) {
-				Logger.log(getClass(), LogLevel.INFO, "Using javax.script JavaScript engine.");
+				Logger.log(getClass(), LogLevel.TRACE, "Using javax.script JavaScript engine.");
 				this.pacScriptParser = new JavaxPacScriptParser(pacSource);
 			} else {
-				Logger.log(getClass(), LogLevel.INFO, "Using Rhino JavaScript engine.");
+				Logger.log(getClass(), LogLevel.TRACE, "Using Rhino JavaScript engine.");
 				this.pacScriptParser = new RhinoPacScriptParser(pacSource);
 			}
 			Logger.log(getClass(), LogLevel.TRACE, "selectEngine:{0}", pacScriptParser);

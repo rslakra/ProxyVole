@@ -7,9 +7,10 @@ import com.btr.proxy.util.Logger;
 import com.btr.proxy.util.Logger.LogLevel;
 
 /****************************************************************************
- * Utility to check availablility of javax.script
+ * Utility to check availability of javax.script
  * 
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2009
+ * @author Rohtash Singh Lakra (rohtash.singh@gmail.com)
  ***************************************************************************/
 abstract class ScriptAvailability {
 	
@@ -22,8 +23,9 @@ abstract class ScriptAvailability {
 		Object engine = null;
 		try {
 			Class<?> managerClass = Class.forName("javax.script.ScriptEngineManager");
-			Method m = managerClass.getMethod("getEngineByMimeType", String.class);
-			engine = m.invoke(managerClass.newInstance(), "text/javascript");
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "Checking JavaxScriptingAvailable. managerClass:{0}", managerClass);
+			Method method = managerClass.getMethod("getEngineByMimeType", String.class);
+			engine = method.invoke(managerClass.newInstance(), "text/javascript");
 		} catch (ClassNotFoundException e) {
 			// javax.script not available
 			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
@@ -41,7 +43,7 @@ abstract class ScriptAvailability {
 			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		}
 
-		return engine != null;
+		return (engine != null);
 	}
 
 	/*************************************************************************

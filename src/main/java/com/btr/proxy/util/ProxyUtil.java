@@ -34,9 +34,11 @@ public class ProxyUtil {
 	 ************************************************************************/
 	
 	public static FixedProxySelector parseProxySettings(String proxyVar) {
+		Logger.log(ProxyUtil.class, LogLevel.TRACE, "parseProxySettings({0})", proxyVar);
 		if(proxyVar == null || proxyVar.trim().length() == 0) {
 			return null;
 		}
+		
 		Matcher matcher = pattern.matcher(proxyVar);
 		if(matcher.matches()) {
 			String host = matcher.group(1);
@@ -46,6 +48,8 @@ public class ProxyUtil {
 			} else {
 				port = DEFAULT_PROXY_PORT;
 			}
+
+			Logger.log(ProxyUtil.class, LogLevel.TRACE, "host:{0}, port:{1}", host, port);
 			return new FixedProxySelector(host.trim(), port);
 		} else {
 			return null;
@@ -78,14 +82,14 @@ public class ProxyUtil {
 	 *         working
 	 *         selector.
 	 ************************************************************************/
-	
 	public static PacProxySelector buildPacSelectorForUrl(String url) {
-		PacProxySelector result = null;
+		PacProxySelector pacProxySelector = null;
 		PacScriptSource pacSource = new UrlPacScriptSource(url);
 		if(pacSource.isScriptValid()) {
-			result = new PacProxySelector(pacSource);
+			pacProxySelector = new PacProxySelector(pacSource);
 		}
-		return result;
+		
+		return pacProxySelector;
 	}
 	
 }

@@ -75,11 +75,11 @@ public class JavaxPacScriptParser implements PacScriptParser {
 			if(String.class.isAssignableFrom(method.getReturnType())) {
 				functionCall = "String(" + functionCall + ")";
 			}
-			Logger.log(getClass(), LogLevel.ERROR, "functionCall:{0}", functionCall);
+			Logger.log(getClass(), LogLevel.TRACE, "functionCall:{0}", functionCall);
 			toEval.append(functionCall).append("; }");
 			
 			try {
-				Logger.log(getClass(), LogLevel.ERROR, "toEval:{0}", toEval);
+				Logger.log(getClass(), LogLevel.TRACE, "toEval:{0}", toEval);
 				engine.eval(toEval.toString());
 			} catch(ScriptException e) {
 				Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error when creating alias for " + name + ". error:{0}", e);

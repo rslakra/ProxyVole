@@ -40,9 +40,11 @@ import com.btr.proxy.util.Logger.LogLevel;
 
 public class ProxySearch implements ProxySearchStrategy {
 	
+	/*20 Minutes*/
 	private static final int DEFAULT_PAC_CACHE_SIZE = 20;
 
-	private static final long DEFAULT_PAC_CACHE_TTL = 1000*60*10; // 10 Minutes
+	/*10 Minutes*/
+	private static final long DEFAULT_PAC_CACHE_TTL = 1000 * 60 * 10;
 	
 	private List<ProxySearchStrategy> strategies;
 	private int pacCacheSize;
@@ -187,7 +189,6 @@ public class ProxySearch implements ProxySearchStrategy {
 	 * @return a ProxySelector, null if none was found for the current 
 	 * 		builder configuration.
 	 ************************************************************************/
-	
 	public ProxySelector getProxySelector() {
 		Logger.log(getClass(), LogLevel.TRACE, "Executing search strategies to find proxy selector");
 		for (ProxySearchStrategy strat : this.strategies) {
