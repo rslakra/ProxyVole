@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /*****************************************************************************
  * Parser for the Firefox settings file.
  * Will extract all relevant proxy settings form the configuration file.
@@ -34,9 +37,9 @@ class FirefoxSettingParser {
 	public Properties parseSettings(FirefoxProfileSource source) throws IOException {
 		// Search settings folder
 		File profileFolder = source.getProfileFolder();
-		
 		// Read settings from file
 		File settingsFile = new File(profileFolder, "prefs.js");
+		Logger.log(getClass(), LogLevel.TRACE, "parseSettings settingsFile:{0}", settingsFile);
 		
 		BufferedReader fin = new BufferedReader(
 				new InputStreamReader(
@@ -72,6 +75,7 @@ class FirefoxSettingParser {
 			fin.close();
 		}
 
+		Logger.log(getClass(), LogLevel.TRACE, "parseSettings result:{0}", result);
 		return result;
 	}
 	

@@ -40,29 +40,25 @@ public class DesktopProxySearchStrategy implements ProxySearchStrategy {
 	 ************************************************************************/
 	
 	private ProxySearchStrategy findDesktopSpecificStrategy() {
-		Platform pf = PlatformUtil.getCurrentPlattform();
-		Desktop dt = PlatformUtil.getCurrentDesktop();
-		
+		Platform platform = PlatformUtil.getCurrentPlattform();
+		Desktop desktop = PlatformUtil.getCurrentDesktop();
 		Logger.log(getClass(), LogLevel.TRACE, "Detecting system settings.");
 		
 		ProxySearchStrategy strategy = null;
-		
-		if (pf == Platform.WIN) {
+		if(platform == Platform.WIN) {
 			Logger.log(getClass(), LogLevel.TRACE, "We are running on Windows.");
 			strategy = new WinProxySearchStrategy();
-		} else
-		if (dt == Desktop.KDE) {
+		} else if(desktop == Desktop.KDE) {
 			Logger.log(getClass(), LogLevel.TRACE, "We are running on KDE.");
 			strategy = new KdeProxySearchStrategy();
-		} else 
-		if (dt == Desktop.GNOME) {
+		} else if(desktop == Desktop.GNOME) {
 			Logger.log(getClass(), LogLevel.TRACE, "We are running on Gnome.");
 			strategy = new GnomeProxySearchStrategy();
-		} else
-		if (dt == Desktop.MAC_OS) {
+		} else if(desktop == Desktop.MAC_OS) {
 			Logger.log(getClass(), LogLevel.TRACE, "We are running on Mac OSX.");
 			strategy = new OsxProxySearchStrategy();
 		}
+		
 		return strategy;
 	}
 

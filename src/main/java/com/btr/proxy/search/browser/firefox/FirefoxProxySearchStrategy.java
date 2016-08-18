@@ -90,6 +90,7 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 		Logger.log(getClass(), LogLevel.TRACE, "Detecting Firefox settings.");
 
 		Properties settings = readSettings();
+		Logger.log(getClass(), LogLevel.TRACE, "settings:{0}", settings);
 		
 		ProxySelector result = null; 
 		int type = Integer.parseInt(settings.getProperty("network.proxy.type", "-1"));
@@ -256,14 +257,12 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 	
 	private void installSelectorForProtocol(ProtocolDispatchSelector ps,
 			Properties settings, String protocol) throws NumberFormatException {
-		
-		String proxyHost = settings.getProperty("network.proxy."+protocol, null);
-		int proxyPort = Integer.parseInt(settings.getProperty("network.proxy."+protocol+"_port", "0"));
+		String proxyHost = settings.getProperty("network.proxy." + protocol, null);
+		int proxyPort = Integer.parseInt(settings.getProperty("network.proxy." + protocol + "_port", "0"));
 		Logger.log(getClass(), LogLevel.TRACE, "Firefox " + protocol + " proxy is {0}:{1}", proxyHost, proxyPort);
-		if (proxyHost != null && proxyPort != 0) {
+		if(proxyHost != null && proxyPort != 0) {
 			ps.setSelector(protocol, new FixedProxySelector(proxyHost, proxyPort));
 		}
 	}
-	
 
 }

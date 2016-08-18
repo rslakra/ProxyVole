@@ -241,19 +241,15 @@ public final class PListParser
          *
          * @param closeable or null.
          */
-        static void silentlyClose(Closeable closeable)
-        {
-                try
-                        {
-                                if (closeable != null) {
-									closeable.close();
-								}
-                }
-                catch (IOException e)
-                {
-                        // Ignore
-                }
-        }
+		static void silentlyClose(Closeable closeable) {
+			try {
+				if(closeable != null) {
+					closeable.close();
+				}
+			} catch(IOException e) {
+				// Ignore
+			}
+		}
 
 		/*************************************************************************
 		 * Reads from the given input stream and parses it to a Dict.
@@ -349,18 +345,13 @@ public final class PListParser
          * @return the resulting object.
          * @throws XmlParseException if there was some error in the xml.
          */
-        private Object parseElement(Node element) throws XmlParseException
-        {
-                try
-                {
-                        return parseElementRaw(element);
-                }
-                catch (Exception e)
-                {
-                        throw new XmlParseException("Failed to parse: " + element.getNodeName(), e);
-                }
-        }
-
+		private Object parseElement(Node element) throws XmlParseException {
+			try {
+				return parseElementRaw(element);
+			} catch(Exception e) {
+				throw new XmlParseException("Failed to parse: " + element.getNodeName(), e);
+			}
+		}
 
         /**
          * Parses a (non-top) xml element.
@@ -541,8 +532,5 @@ public final class PListParser
                 return result;
         }
         
-        
-  
- 
 }
 

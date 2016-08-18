@@ -72,50 +72,49 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 	 ************************************************************************/
 
 	public ProxySelector getProxySelector() throws ProxyException {
-		
-        Logger.log(getClass(), LogLevel.TRACE, "Detecting OSX proxy settings");
-        
-        try {
-           List<String> acceptedInterfaces = getNetworkInterfaces();
-           
-           Dict settings = PListParser.load(getSettingsFile());
-           Object currentSet = settings.getAtPath("/CurrentSet");
-           if (currentSet == null) {
-              throw new ProxyException("CurrentSet not defined");
-           }
-           
-           Dict networkSet = (Dict) settings.getAtPath(String.valueOf(currentSet));
-           List<?> serviceOrder = (List<?>) networkSet.getAtPath("/Network/Global/IPv4/ServiceOrder");
-           if (serviceOrder == null || serviceOrder.size() == 0) {
-              throw new ProxyException("ServiceOrder not defined");
-           }
-
-           // Look at the Services in priority order and pick the first one that was
-           // also accepted above
-           Dict proxySettings = null;
-           for (int i = 0; i < serviceOrder.size() && proxySettings == null; i++) {
-              Object candidateService = serviceOrder.get(i);
-              Object networkService = networkSet.getAtPath("/Network/Service/"+candidateService+"/__LINK__");
-              if (networkService == null ) {
-                 throw new ProxyException("NetworkService not defined.");
-              }
-              Dict selectedServiceSettings = (Dict) settings.getAtPath(""+networkService);
-              String interfaceName = (String) selectedServiceSettings.getAtPath("/Interface/DeviceName");
-              if (acceptedInterfaces.contains(interfaceName)) {
-                 Logger.log(getClass(), LogLevel.TRACE, "Looking up proxies for device " + interfaceName);
-                 proxySettings = (Dict) selectedServiceSettings.getAtPath("/Proxies");
-              }
-           }
-           if (proxySettings == null) {
-              return NoProxySelector.getInstance();
-           }
-           
-          return buildSelector(proxySettings);
-        } catch (XmlParseException e) {
-           throw new ProxyException(e);
-        } catch (IOException e) {
-           throw new ProxyException(e);
-        }
+		Logger.log(getClass(), LogLevel.TRACE, "Detecting OSX proxy settings");
+		try {
+			List<String> acceptedInterfaces = getNetworkInterfaces();
+			
+			Dict settings = PListParser.load(getSettingsFile());
+			Object currentSet = settings.getAtPath("/CurrentSet");
+			if(currentSet == null) {
+				throw new ProxyException("CurrentSet not defined");
+			}
+			
+			Dict networkSet = (Dict) settings.getAtPath(String.valueOf(currentSet));
+			List<?> serviceOrder = (List<?>) networkSet.getAtPath("/Network/Global/IPv4/ServiceOrder");
+			if(serviceOrder == null || serviceOrder.size() == 0) {
+				throw new ProxyException("ServiceOrder not defined");
+			}
+			
+			// Look at the Services in priority order and pick the first one
+			// that was
+			// also accepted above
+			Dict proxySettings = null;
+			for(int i = 0; i < serviceOrder.size() && proxySettings == null; i++) {
+				Object candidateService = serviceOrder.get(i);
+				Object networkService = networkSet.getAtPath("/Network/Service/" + candidateService + "/__LINK__");
+				if(networkService == null) {
+					throw new ProxyException("NetworkService not defined.");
+				}
+				Dict selectedServiceSettings = (Dict) settings.getAtPath("" + networkService);
+				String interfaceName = (String) selectedServiceSettings.getAtPath("/Interface/DeviceName");
+				if(acceptedInterfaces.contains(interfaceName)) {
+					Logger.log(getClass(), LogLevel.TRACE, "Looking up proxies for device:" + interfaceName);
+					proxySettings = (Dict) selectedServiceSettings.getAtPath("/Proxies");
+				}
+			}
+			if(proxySettings == null) {
+				return NoProxySelector.getInstance();
+			}
+			
+			return buildSelector(proxySettings);
+		} catch(XmlParseException e) {
+			throw new ProxyException(e);
+		} catch(IOException e) {
+			throw new ProxyException(e);
+		}
 	}
 
 	/*************************************************************************
@@ -188,12 +187,14 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 	 ************************************************************************/
 	
 	private File getSettingsFile() {
-		File result = new File(SETTINGS_FILE); 
+		File settingsFile = new File(SETTINGS_FILE); 
+		Logger.log(getClass(), LogLevel.TRACE, "settingsFile:{0}", settingsFile);
 		String overrideFile = System.getProperty(OVERRIDE_SETTINGS_FILE);
 		if (overrideFile != null) { 
+			Logger.log(getClass(), LogLevel.TRACE, "overrideFile:{0}", overrideFile);
 			return new File(overrideFile);
 		}
-		return result;
+		return settingsFile;
 	}
 
 	/*************************************************************************
@@ -307,12 +308,11 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 	 * @param protocol to use.
 	 ************************************************************************/
 	
-	private void installSelectorForProtocol(Dict proxySettings,
-			ProtocolDispatchSelector ps, String protocol) {
-		String prefix = protocol.trim(); 
-		if (isActive(proxySettings.get(prefix+"Enable"))) {
-			String proxyHost = (String) proxySettings.get(prefix+"Proxy");
-			int proxyPort = (Integer) proxySettings.get(prefix+"Port");
+	private void installSelectorForProtocol(Dict proxySettings, ProtocolDispatchSelector ps, String protocol) {
+		String prefix = protocol.trim();
+		if(isActive(proxySettings.get(prefix + "Enable"))) {
+			String proxyHost = (String) proxySettings.get(prefix + "Proxy");
+			int proxyPort = (Integer) proxySettings.get(prefix + "Port");
 			FixedProxySelector fp = new FixedProxySelector(proxyHost, proxyPort);
 			ps.setSelector(protocol.toLowerCase(), fp);
 			Logger.log(getClass(), LogLevel.TRACE, "OSX uses for {0} the proxy {1}:{2}", protocol, proxyHost, proxyPort);

@@ -67,30 +67,27 @@ public class PlatformUtil {
 	 ************************************************************************/
 	
 	public static Desktop getCurrentDesktop() {
-		Platform platf = getCurrentPlattform();
-		
-		if (platf == Platform.WIN) {
+		Platform platform = getCurrentPlattform();
+		if(platform == Platform.WIN) {
 			Logger.log(PlatformUtil.class, LogLevel.TRACE, "Detected Windows desktop");
 			return Desktop.WIN;
-		} 
-		if (platf == Platform.MAC_OS) {
+		}
+		if(platform == Platform.MAC_OS) {
 			Logger.log(PlatformUtil.class, LogLevel.TRACE, "Detected Mac OS desktop");
 			return Desktop.MAC_OS;
-		} 
-
-		if (platf == Platform.LINUX 
-				|| platf == Platform.SOLARIS 
-				|| platf == Platform.OTHER) {
-			
-			if (isKDE()) {
+		}
+		
+		if(platform == Platform.LINUX || platform == Platform.SOLARIS || platform == Platform.OTHER) {
+			if(isKDE()) {
 				Logger.log(PlatformUtil.class, LogLevel.TRACE, "Detected KDE desktop");
 				return Desktop.KDE;
 			}
-			if (isGnome()) {
+			if(isGnome()) {
 				Logger.log(PlatformUtil.class, LogLevel.TRACE, "Detected Gnome desktop");
 				return Desktop.GNOME;
 			}
-		} 
+		}
+		
 		Logger.log(PlatformUtil.class, LogLevel.TRACE, "Detected Unknown desktop");
 		return Desktop.OTHER;
 	}

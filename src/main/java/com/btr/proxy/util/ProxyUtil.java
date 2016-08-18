@@ -24,40 +24,43 @@ public class ProxyUtil {
 	public static final int DEFAULT_PROXY_PORT = 80;
 	
 	private static List<Proxy> noProxyList;
-    private static Pattern pattern = Pattern.compile("\\w*?:?/*([^:/]+):?(\\d*)/?");
+	private static Pattern pattern = Pattern.compile("\\w*?:?/*([^:/]+):?(\\d*)/?");
 	
 	/*************************************************************************
 	 * Parse host and port out of a proxy variable.
+	 * 
 	 * @param proxyVar the proxy string. example: http://192.168.10.9:8080/
 	 * @return a FixedProxySelector using this settings, null on parse error.
 	 ************************************************************************/
 	
 	public static FixedProxySelector parseProxySettings(String proxyVar) {
-		if (proxyVar == null || proxyVar.trim().length() == 0) {
+		if(proxyVar == null || proxyVar.trim().length() == 0) {
 			return null;
 		}
 		Matcher matcher = pattern.matcher(proxyVar);
-		if (matcher.matches()) {
-		    String host = matcher.group(1);
-		    int port;
-		    if (!"".equals(matcher.group(2))) {
-		        port = Integer.parseInt(matcher.group(2));
-		    } else {
-		        port = DEFAULT_PROXY_PORT;
-		    }
-            return new FixedProxySelector(host.trim(), port);
+		if(matcher.matches()) {
+			String host = matcher.group(1);
+			int port;
+			if(!"".equals(matcher.group(2))) {
+				port = Integer.parseInt(matcher.group(2));
+			} else {
+				port = DEFAULT_PROXY_PORT;
+			}
+			return new FixedProxySelector(host.trim(), port);
 		} else {
-		    return null;
+			return null;
 		}
 	}
 	
 	/*************************************************************************
-	 * Gets an unmodifiable proxy list that will have as it's only entry an DIRECT proxy.
+	 * Gets an unmodifiable proxy list that will have as it's only entry an
+	 * DIRECT proxy.
+	 * 
 	 * @return a list with a DIRECT proxy in it.
 	 ************************************************************************/
 	
 	public static synchronized List<Proxy> noProxyList() {
-		if (noProxyList == null) {
+		if(noProxyList == null) {
 			ArrayList<Proxy> list = new ArrayList<Proxy>(1);
 			list.add(Proxy.NO_PROXY);
 			noProxyList = Collections.unmodifiableList(list);
@@ -69,19 +72,20 @@ public class ProxyUtil {
 	
 	/*************************************************************************
 	 * Build a PAC proxy selector for the given URL.
+	 * 
 	 * @param url to fetch the PAC script from.
-	 * @return a PacProxySelector or null if it is not possible to build a working
-	 * selector.
+	 * @return a PacProxySelector or null if it is not possible to build a
+	 *         working
+	 *         selector.
 	 ************************************************************************/
 	
 	public static PacProxySelector buildPacSelectorForUrl(String url) {
 		PacProxySelector result = null;
 		PacScriptSource pacSource = new UrlPacScriptSource(url);
-		if (pacSource.isScriptValid()) {
+		if(pacSource.isScriptValid()) {
 			result = new PacProxySelector(pacSource);
 		}
 		return result;
 	}
 	
-
 }

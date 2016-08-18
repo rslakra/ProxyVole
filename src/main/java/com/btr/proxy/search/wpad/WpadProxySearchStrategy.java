@@ -98,7 +98,6 @@ public class WpadProxySearchStrategy implements ProxySearchStrategy {
 	private String detectScriptUrlPerDNS() throws IOException {
 		String result = null;
 		String fqdn = InetAddress.getLocalHost().getCanonicalHostName();
-
 		Logger.log(getClass(), LogLevel.TRACE, "Searching per DNS guessing.");
 
 		int index = fqdn.indexOf('.');
@@ -123,7 +122,7 @@ public class WpadProxySearchStrategy implements ProxySearchStrategy {
 				}
 				con.disconnect();
 			} catch (UnknownHostException e) {
-				Logger.log(getClass(), LogLevel.DEBUG, "Not available!");
+				Logger.log(getClass(), LogLevel.ERROR, "Not available! error:{0}", e);
 				// Not a real error, try next address
 			}
 

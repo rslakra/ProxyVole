@@ -7,9 +7,9 @@ package com.btr.proxy.util;
  ****************************************************************************/
 
 public class ProxyException extends Exception {
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	/*************************************************************************
 	 * Constructor
 	 ************************************************************************/
@@ -17,9 +17,10 @@ public class ProxyException extends Exception {
 	public ProxyException() {
 		super();
 	}
-
+	
 	/*************************************************************************
 	 * Constructor
+	 * 
 	 * @param message the error message
 	 * @param cause the causing exception for chaining exceptions.
 	 ************************************************************************/
@@ -27,18 +28,20 @@ public class ProxyException extends Exception {
 	public ProxyException(String message, Throwable cause) {
 		super(message, cause);
 	}
-
+	
 	/*************************************************************************
 	 * Constructor
+	 * 
 	 * @param message the error message
 	 ************************************************************************/
 	
 	public ProxyException(String message) {
 		super(message);
 	}
-
+	
 	/*************************************************************************
 	 * Constructor
+	 * 
 	 * @param cause the causing exception for chaining exceptions.
 	 ************************************************************************/
 	
@@ -46,5 +49,4 @@ public class ProxyException extends Exception {
 		super(cause);
 	}
 	
-
 }
