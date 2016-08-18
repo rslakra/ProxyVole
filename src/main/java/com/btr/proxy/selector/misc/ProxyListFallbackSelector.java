@@ -18,21 +18,22 @@ import com.btr.proxy.util.Logger.LogLevel;
  * Implements a fallback selector to warp it around an existing ProxySelector.
  * This will remove proxies from a list of proxies and implement an automatic
  * retry mechanism.
- *  
+ * 
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2011
  ****************************************************************************/
 
 public class ProxyListFallbackSelector extends ProxySelector {
-
+	
 	// Retry a unresponsive proxy after 10 minutes per default.
-	private static final int DEFAULT_RETRY_DELAY = 1000*60*10;
+	private static final int DEFAULT_RETRY_DELAY = 1000 * 60 * 10;
 	
 	private ProxySelector delegate;
 	private ConcurrentHashMap<SocketAddress, Long> failedDelayCache;
-	private long retryAfterMs; 
+	private long retryAfterMs;
 	
 	/*************************************************************************
 	 * Constructor
+	 * 
 	 * @param delegate the delegate to use.
 	 ************************************************************************/
 	
@@ -42,7 +43,8 @@ public class ProxyListFallbackSelector extends ProxySelector {
 	
 	/*************************************************************************
 	 * Constructor
-	 * @param retryAfterMs the "retry delay" as amount of milliseconds. 
+	 * 
+	 * @param retryAfterMs the "retry delay" as amount of milliseconds.
 	 * @param delegate the delegate to use.
 	 ************************************************************************/
 	
@@ -55,19 +57,20 @@ public class ProxyListFallbackSelector extends ProxySelector {
 	
 	/*************************************************************************
 	 * connectFailed
-	 * @see java.net.ProxySelector#connectFailed(java.net.URI, java.net.SocketAddress, java.io.IOException)
+	 * 
+	 * @see java.net.ProxySelector#connectFailed(java.net.URI,
+	 *      java.net.SocketAddress, java.io.IOException)
 	 ************************************************************************/
-
 	@Override
 	public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 		this.failedDelayCache.put(sa, System.currentTimeMillis());
 	}
-
+	
 	/*************************************************************************
 	 * select
+	 * 
 	 * @see java.net.ProxySelector#select(java.net.URI)
 	 ************************************************************************/
-
 	@Override
 	public List<Proxy> select(URI uri) {
 		cleanupCache();
@@ -76,44 +79,44 @@ public class ProxyListFallbackSelector extends ProxySelector {
 		List<Proxy> result = filterUnresponsiveProxiesFromList(proxyList);
 		return result;
 	}
-
+	
 	/*************************************************************************
 	 * Cleanup the entries from the cache that are no longer unresponsive.
 	 ************************************************************************/
 	
 	private void cleanupCache() {
-		Iterator<Entry<SocketAddress, Long>> it 
-					= this.failedDelayCache.entrySet().iterator();
-		while (it.hasNext()) {
+		Iterator<Entry<SocketAddress, Long>> it = this.failedDelayCache.entrySet().iterator();
+		while(it.hasNext()) {
 			Entry<SocketAddress, Long> e = it.next();
 			Long lastFailTime = e.getValue();
-			if (retryDelayHasPassedBy(lastFailTime)) {
+			if(retryDelayHasPassedBy(lastFailTime)) {
 				it.remove();
 			}
 		}
 	}
-
+	
 	/*************************************************************************
 	 * Filters out proxies that are not reponding.
+	 * 
 	 * @param proxyList a list of proxies to test.
 	 * @return the filtered list.
 	 ************************************************************************/
-	
 	private List<Proxy> filterUnresponsiveProxiesFromList(List<Proxy> proxyList) {
-		if (this.failedDelayCache.isEmpty()) {
+		if(this.failedDelayCache.isEmpty()) {
 			return proxyList;
 		}
 		List<Proxy> result = new ArrayList<Proxy>(proxyList.size());
-		for (Proxy proxy : proxyList) {
-			if (isDirect(proxy) || isNotUnresponsive(proxy)) {
+		for(Proxy proxy : proxyList) {
+			if(isDirect(proxy) || isNotUnresponsive(proxy)) {
 				result.add(proxy);
 			}
 		}
 		return result;
 	}
-
+	
 	/*************************************************************************
-	 * Checks if the given proxy is representing a direct connection. 
+	 * Checks if the given proxy is representing a direct connection.
+	 * 
 	 * @param proxy to inspect.
 	 * @return true if it is direct else false.
 	 ************************************************************************/
@@ -121,9 +124,10 @@ public class ProxyListFallbackSelector extends ProxySelector {
 	private boolean isDirect(Proxy proxy) {
 		return Proxy.NO_PROXY.equals(proxy);
 	}
-
+	
 	/*************************************************************************
-	 * Tests that a given proxy is not "unresponsive". 
+	 * Tests that a given proxy is not "unresponsive".
+	 * 
 	 * @param proxy to test.
 	 * @return true if not unresponsive.
 	 ************************************************************************/
@@ -132,20 +136,21 @@ public class ProxyListFallbackSelector extends ProxySelector {
 		Long lastFailTime = this.failedDelayCache.get(proxy.address());
 		return retryDelayHasPassedBy(lastFailTime);
 	}
-
+	
 	/*************************************************************************
 	 * Checks if the retry delay has passed.
-	 * @param lastFailTime 
+	 * 
+	 * @param lastFailTime
 	 * @return true if the delay has passed.
 	 ************************************************************************/
 	
 	private boolean retryDelayHasPassedBy(Long lastFailTime) {
-		return lastFailTime == null 
-				|| lastFailTime + this.retryAfterMs < System.currentTimeMillis();
+		return lastFailTime == null || lastFailTime + this.retryAfterMs < System.currentTimeMillis();
 	}
-
+	
 	/*************************************************************************
 	 * Only used for unit testing not part of the public API.
+	 * 
 	 * @param retryAfterMs The retryAfterMs to set.
 	 ************************************************************************/
 	
@@ -153,6 +158,4 @@ public class ProxyListFallbackSelector extends ProxySelector {
 		this.retryAfterMs = retryAfterMs;
 	}
 	
-	
-
 }

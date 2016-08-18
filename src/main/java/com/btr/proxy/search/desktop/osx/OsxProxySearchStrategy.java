@@ -72,7 +72,6 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 	 * @return a configured ProxySelector, null if none is found.
 	 * @throws ProxyException on file reading error. 
 	 ************************************************************************/
-
 	public ProxySelector getProxySelector() throws ProxyException {
 		Logger.log(getClass(), LogLevel.TRACE, "Detecting OSX proxy settings");
 		try {
@@ -118,6 +117,7 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 					proxySettings = (Dict) selectedServiceSettings.getAtPath("/Proxies");
 				}
 			}
+			
 			if(proxySettings == null) {
 				return NoProxySelector.getInstance();
 			}

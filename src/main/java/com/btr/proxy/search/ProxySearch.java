@@ -190,21 +190,21 @@ public class ProxySearch implements ProxySearchStrategy {
 	 * 		builder configuration.
 	 ************************************************************************/
 	public ProxySelector getProxySelector() {
+		ProxySelector proxySelector = null;
 		Logger.log(getClass(), LogLevel.TRACE, "Executing search strategies to find proxy selector");
-		for (ProxySearchStrategy strat : this.strategies) {
+		for (ProxySearchStrategy proxySearchStrategy : this.strategies) {
 			try {
-				ProxySelector selector = strat.getProxySelector();
-				if (selector != null) {
-					selector = installBufferingAndFallbackBehaviour(selector);
-					return selector;
+				proxySelector = proxySearchStrategy.getProxySelector();
+				if (proxySelector != null) {
+					proxySelector = installBufferingAndFallbackBehaviour(proxySelector);
+					break;
 				}
 			} catch (ProxyException e) {
 				Logger.log(getClass(), LogLevel.ERROR, "Strategy {0} failed trying next one.", e);
-				// Ignore and try next strategy.
 			}
 		}
 		
-		return null;
+		return proxySelector;
 	}
 
 	/*************************************************************************
@@ -213,14 +213,15 @@ public class ProxySearch implements ProxySearchStrategy {
 	 * @return the wrapped proxy selector or the passed in selector if nothing is done.
 	 ************************************************************************/
 	
-	private ProxySelector installBufferingAndFallbackBehaviour(ProxySelector selector) {
-		if (selector instanceof PacProxySelector) {
+	private ProxySelector installBufferingAndFallbackBehaviour(ProxySelector proxySelector) {
+		if (proxySelector instanceof PacProxySelector) {
 			if (this.pacCacheSize > 0) {
-				selector = new BufferedProxySelector(this.pacCacheSize, this.pacCacheTTL, selector);
+				proxySelector = new BufferedProxySelector(this.pacCacheSize, this.pacCacheTTL, proxySelector);
 			}
-			selector = new ProxyListFallbackSelector(selector);
+			proxySelector = new ProxyListFallbackSelector(proxySelector);
 		}
-		return selector;
+		
+		return proxySelector;
 	}
 
 	/*************************************************************************

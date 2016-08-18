@@ -31,7 +31,7 @@ public class DesktopProxySearchStrategy implements ProxySearchStrategy {
 	
 	public ProxySelector getProxySelector() throws ProxyException {
 		ProxySearchStrategy strategy = findDesktopSpecificStrategy();
-		return strategy == null? null : strategy.getProxySelector();
+		return (strategy == null? null : strategy.getProxySelector());
 	}
 
 	/*************************************************************************

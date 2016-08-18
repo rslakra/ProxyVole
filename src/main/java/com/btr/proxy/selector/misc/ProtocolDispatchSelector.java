@@ -26,7 +26,6 @@ public class ProtocolDispatchSelector extends ProxySelector {
 	/*************************************************************************
 	 * Constructor
 	 ************************************************************************/
-	
 	public ProtocolDispatchSelector() {
 		super();
 		this.selectors = new ConcurrentHashMap<String, ProxySelector>();
@@ -38,14 +37,15 @@ public class ProtocolDispatchSelector extends ProxySelector {
 	 * @param protocol the name of the protocol.
 	 * @param selector the selector to use.
 	 ************************************************************************/
-	
 	public void setSelector(String protocol, ProxySelector selector) {
 		if (protocol == null) {
 			throw new NullPointerException("Protocol must not be null.");
 		}
+		
 		if (selector == null) {
 			throw new NullPointerException("Selector must not be null.");
 		}
+		
 		this.selectors.put(protocol, selector);
 	}
 	
@@ -86,7 +86,6 @@ public class ProtocolDispatchSelector extends ProxySelector {
 	 * connectFailed
 	 * @see java.net.ProxySelector#connectFailed(java.net.URI, java.net.SocketAddress, java.io.IOException)
 	 ************************************************************************/
-
 	@Override
 	public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 		ProxySelector selector = this.fallbackSelector;
