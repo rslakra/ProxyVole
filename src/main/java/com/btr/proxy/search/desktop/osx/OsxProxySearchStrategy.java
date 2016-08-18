@@ -2,11 +2,13 @@ package com.btr.proxy.search.desktop.osx;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ProxySelector;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -101,7 +103,18 @@ public class OsxProxySearchStrategy implements ProxySearchStrategy {
 				Dict selectedServiceSettings = (Dict) settings.getAtPath("" + networkService);
 				String interfaceName = (String) selectedServiceSettings.getAtPath("/Interface/DeviceName");
 				if(acceptedInterfaces.contains(interfaceName)) {
-					Logger.log(getClass(), LogLevel.TRACE, "Looking up proxies for device:" + interfaceName);
+					NetworkInterface networkInterface = NetworkInterface.getByName(interfaceName);
+					StringBuilder deviceInfo = new StringBuilder();
+					if(networkInterface != null)
+					{
+						deviceInfo.append("Display Name:").append(networkInterface.getDisplayName()).append("\n");
+						deviceInfo.append("Name:").append(networkInterface.getName()).append("\n");
+						Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+				        for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+				        	deviceInfo.append("InetAddress:").append(inetAddress).append("\n");
+				        }					
+					}
+					Logger.log(getClass(), LogLevel.TRACE, "Looking up proxies for device:{0}\n\n{1}\n", interfaceName, deviceInfo.toString());
 					proxySettings = (Dict) selectedServiceSettings.getAtPath("/Proxies");
 				}
 			}
