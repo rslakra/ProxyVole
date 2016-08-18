@@ -198,7 +198,7 @@ public class ProxySearch implements ProxySearchStrategy {
 					return selector;
 				}
 			} catch (ProxyException e) {
-				Logger.log(getClass(), LogLevel.DEBUG, "Strategy {0} failed trying next one.", e);
+				Logger.log(getClass(), LogLevel.ERROR, "Strategy {0} failed trying next one.", e);
 				// Ignore and try next strategy.
 			}
 		}

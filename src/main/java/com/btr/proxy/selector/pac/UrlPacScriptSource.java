@@ -212,7 +212,7 @@ public class UrlPacScriptSource implements PacScriptSource {
 			try {
 				timeout = Integer.parseInt(prop.trim());
 			} catch (NumberFormatException e) {
-				Logger.log(getClass(), LogLevel.DEBUG, "Invalid override property : {0}={1}", overrideProperty, prop);
+				Logger.log(getClass(), LogLevel.ERROR, "Invalid override property:{0}={1}", overrideProperty, prop);
 				// In this case use the default value.
 			}
 		}
@@ -256,16 +256,16 @@ public class UrlPacScriptSource implements PacScriptSource {
 		try {
 			String script = getScriptContent();
 			if (script == null || script.trim().length() == 0) {
-				Logger.log(getClass(), LogLevel.DEBUG, "PAC script is empty. Skipping script!");
+				Logger.log(getClass(), LogLevel.TRACE, "PAC script is empty. Skipping script!");
 				return false;
 			}
 			if (script.indexOf("FindProxyForURL") == -1) {
-				Logger.log(getClass(), LogLevel.DEBUG, "PAC script entry point FindProxyForURL not found. Skipping script!");
+				Logger.log(getClass(), LogLevel.TRACE, "PAC script entry point FindProxyForURL not found. Skipping script!");
 				return false;
 			}
 			return true;
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.DEBUG, "File reading error: {0}", e);
+			Logger.log(getClass(), LogLevel.ERROR, "File reading error: {0}", e);
 			return false;
 		}
 	}

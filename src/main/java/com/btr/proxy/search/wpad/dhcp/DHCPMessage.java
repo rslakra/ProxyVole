@@ -18,7 +18,7 @@ import com.btr.proxy.util.Logger.LogLevel;
  */
 public class DHCPMessage {
 	// -----------------------------------------------------------
-	//                         Constants
+	// Constants
 	// -----------------------------------------------------------
 	/**
 	 * Operation for a request
@@ -69,7 +69,7 @@ public class DHCPMessage {
 	 * Message Code representing a DHCPINFORM message
 	 */
 	public static final byte DHCPINFORM = 8;
-
+	
 	/**
 	 * Default DHCP client port
 	 */
@@ -85,9 +85,8 @@ public class DHCPMessage {
 	 */
 	public static InetAddress BROADCAST_ADDR = null;
 	
-
 	// -----------------------------------------------------------
-	//               Fields defining a dhcp message
+	// Fields defining a dhcp message
 	// -----------------------------------------------------------
 	/**
 	 * Operation Code.<br>
@@ -97,13 +96,13 @@ public class DHCPMessage {
 	private byte op;
 	
 	/**
-	 * Networktype as defined by 
+	 * Networktype as defined by
 	 * <a href="http://tools.ietf.org/html/rfc1340#page-54">RFC1340 page 54</a>.
 	 */
 	private byte htype;
 	
 	/**
-	 * Hardware address length (e.g.  '6' for ethernet).
+	 * Hardware address length (e.g. '6' for ethernet).
 	 */
 	private byte hlen;
 	
@@ -118,12 +117,12 @@ public class DHCPMessage {
 	 * client, used by the client and server to associate
 	 * messages and responses between a client and a
 	 * server.
-	*/
+	 */
 	private int xid;
 	
 	/**
-	 *  Filled in by client, seconds elapsed since client
-	 *  started trying to boot.
+	 * Filled in by client, seconds elapsed since client
+	 * started trying to boot.
 	 */
 	private short secs;
 	
@@ -194,17 +193,17 @@ public class DHCPMessage {
 		try {
 			BROADCAST_ADDR = InetAddress.getByName("255.255.255.255");
 			// broadcast address(by default)
-		}
-		catch (UnknownHostException e) {
+		} catch(UnknownHostException e) {
+			Logger.log(DHCPMessage.class, LogLevel.ERROR, "Broadcast address must always exist! error:{0}", e);
 			// Broadcast address must always exist
 		}
 	}
-
+	
 	// -----------------------------------------------------------
-	//                        Constructors
+	// Constructors
 	// -----------------------------------------------------------
 	
-	/** 
+	/**
 	 * Creates empty DHCPMessage object,
 	 * initializes the object, sets the host to the broadcast address,
 	 * the local subnet, binds to the default server port.
@@ -216,8 +215,8 @@ public class DHCPMessage {
 		this.gPort = SERVER_PORT;
 	}
 	
-	/** 
-	 * Copy constructor 
+	/**
+	 * Copy constructor
 	 * creates DHCPMessage from inMessage
 	 * 
 	 * @param inMessage The message to be copied
@@ -244,7 +243,7 @@ public class DHCPMessage {
 		this.optionsList.internalize(inMessage.getOptions());
 	}
 	
-	/** 
+	/**
 	 * Copy constructor
 	 * creates DHCPMessage from inMessage and sets server and port.
 	 * 
@@ -274,8 +273,8 @@ public class DHCPMessage {
 		this.file = inMessage.getFile();
 		this.optionsList.internalize(inMessage.getOptions());
 	}
-
-	/** 
+	
+	/**
 	 * Copy constructor
 	 * creates DHCPMessage from inMessage and sets server name.
 	 * 
@@ -305,7 +304,7 @@ public class DHCPMessage {
 		this.optionsList.internalize(inMessage.getOptions());
 	}
 	
-	/** 
+	/**
 	 * Creates an empty DHCPMessage object,
 	 * initializes the object, sets the host to a specified host name,
 	 * and binds to a specified port.
@@ -399,7 +398,7 @@ public class DHCPMessage {
 		this.gPort = inPort;
 	}
 	
-	/** 
+	/**
 	 * Creates an empty DHCPMessage object,
 	 * initializes the object with a specified byte array containing
 	 * DHCP message information, sets the host to specified host name,
@@ -442,14 +441,13 @@ public class DHCPMessage {
 			byte[] options = new byte[312];
 			inStream.readFully(options, 0, 312);
 			this.optionsList.internalize(options);
-		}
-		catch (IOException e) {
+		} catch(IOException e) {
 			Logger.log(getClass(), LogLevel.ERROR, "Error creating DHCPMessage! error:{0}", e);
 		}
 	}
-
+	
 	// -----------------------------------------------------------
-	//                            Methods
+	// Methods
 	// -----------------------------------------------------------
 	/**
 	 * Initializes datamembers in the constructors
@@ -463,7 +461,7 @@ public class DHCPMessage {
 	/**
 	 * Converts a DHCPMessage object to a byte array.
 	 * 
-	 * @return A byte array with information from DHCPMessage object, 
+	 * @return A byte array with information from DHCPMessage object,
 	 *         ready to send.
 	 */
 	public synchronized byte[] externalize() {
@@ -487,13 +485,13 @@ public class DHCPMessage {
 			outStream.write(this.file, 0, 128);
 			
 			byte[] options = new byte[312];
-			if (this.optionsList == null) {
+			if(this.optionsList == null) {
 				initialize();
 			}
 			
 			options = this.optionsList.externalize();
 			outStream.write(options, 0, 312);
-		} catch (IOException e) {
+		} catch(IOException e) {
 			Logger.log(getClass(), LogLevel.ERROR, "Error externalizing! error:{0}", e);
 		}
 		
@@ -512,8 +510,7 @@ public class DHCPMessage {
 	 */
 	
 	public synchronized DHCPMessage internalize(byte[] ibuff) {
-		ByteArrayInputStream inBStream = 
-			new ByteArrayInputStream(ibuff, 0, ibuff.length);
+		ByteArrayInputStream inBStream = new ByteArrayInputStream(ibuff, 0, ibuff.length);
 		DataInputStream inStream = new DataInputStream(inBStream);
 		
 		try {
@@ -534,13 +531,12 @@ public class DHCPMessage {
 			
 			byte[] options = new byte[312];
 			inStream.readFully(options, 0, 312);
-			if (this.optionsList == null) {
+			if(this.optionsList == null) {
 				initialize();
 			}
 			
 			this.optionsList.internalize(options);
-		}
-		catch (IOException e) {
+		} catch(IOException e) {
 			Logger.log(getClass(), LogLevel.ERROR, "Error internalizing! error:{0}", e);
 		}
 		
@@ -568,7 +564,7 @@ public class DHCPMessage {
 	/**
 	 * Set hardware address length.
 	 * 
-	 * @param inHlen  hardware address length
+	 * @param inHlen hardware address length
 	 */
 	public void setHlen(byte inHlen) {
 		this.hlen = inHlen;
@@ -586,7 +582,7 @@ public class DHCPMessage {
 	/**
 	 * Set transaction ID.
 	 * 
-	 * @param inXid  transactionID
+	 * @param inXid transactionID
 	 */
 	public void setXid(int inXid) {
 		this.xid = inXid;
@@ -597,7 +593,7 @@ public class DHCPMessage {
 	 * renewal process.
 	 * 
 	 * @param inSecs Seconds elapsed since client began address acquisition
-	 *               or renewal process
+	 *            or renewal process
 	 */
 	public void setSecs(short inSecs) {
 		this.secs = inSecs;
@@ -686,14 +682,14 @@ public class DHCPMessage {
 	
 	/**
 	 * Set message destination IP
-	 * @param inHost string representation of message destination IP or 
-	 *               hostname
+	 * 
+	 * @param inHost string representation of message destination IP or
+	 *            hostname
 	 */
 	public void setDestinationHost(String inHost) {
 		try {
 			this.destination_IP = InetAddress.getByName(inHost);
-		}
-		catch (Exception e) {
+		} catch(Exception e) {
 			Logger.log(getClass(), LogLevel.ERROR, "Error setting destination host! error:{0}", e);
 		}
 	}
@@ -726,7 +722,7 @@ public class DHCPMessage {
 		return this.hops;
 	}
 	
-	/** 
+	/**
 	 * @return transaction ID.
 	 */
 	public int getXid() {
@@ -734,8 +730,8 @@ public class DHCPMessage {
 	}
 	
 	/**
-	 * @return seconds elapsed since client began address 
-	 * acquisition or renewal process.
+	 * @return seconds elapsed since client began address
+	 *         acquisition or renewal process.
 	 */
 	public short getSecs() {
 		return this.secs;
@@ -748,14 +744,14 @@ public class DHCPMessage {
 		return this.flags;
 	}
 	
-	/** 
+	/**
 	 * @return client IP address.
 	 */
 	public byte[] getCiaddr() {
 		return this.ciaddr;
 	}
 	
-	/** 
+	/**
 	 * @return 'your' (client) IP address.
 	 */
 	public byte[] getYiaddr() {
@@ -769,21 +765,21 @@ public class DHCPMessage {
 		return this.siaddr;
 	}
 	
-	/** 
+	/**
 	 * @return relay agent IP address.
 	 */
 	public byte[] getGiaddr() {
 		return this.giaddr;
 	}
 	
-	/** 
+	/**
 	 * @return client harware address.
 	 */
 	public byte[] getChaddr() {
 		return this.chaddr;
 	}
 	
-	/** 
+	/**
 	 * @return optional server host name.
 	 */
 	public byte[] getSname() {
@@ -798,18 +794,18 @@ public class DHCPMessage {
 	}
 	
 	/**
-	 * @return a byte array containing options 
+	 * @return a byte array containing options
 	 */
 	public byte[] getOptions() {
-		if (this.optionsList == null) {
+		if(this.optionsList == null) {
 			initialize();
 		}
 		return this.optionsList.externalize();
 	}
 	
 	/**
-	 * @return An interger representation of the message 
-	 *         destination port 
+	 * @return An interger representation of the message
+	 *         destination port
 	 */
 	public int getPort() {
 		return this.gPort;
@@ -818,15 +814,15 @@ public class DHCPMessage {
 	/**
 	 * Get message destination hostname
 	 * 
-	 * @return A string representing the hostname of the 
-	 *         message destination server 
+	 * @return A string representing the hostname of the
+	 *         message destination server
 	 */
 	public String getDestinationAddress() {
 		return this.destination_IP.getHostAddress();
 	}
 	
 	/**
-	 * Sets DHCP options in DHCPMessage. If option already exists 
+	 * Sets DHCP options in DHCPMessage. If option already exists
 	 * then remove old option and insert a new one.
 	 * 
 	 * @param inOptNum option number
@@ -836,7 +832,7 @@ public class DHCPMessage {
 		this.optionsList.setOption((byte) inOptNum, inOptionData);
 	}
 	
-	/** 
+	/**
 	 * Returns specified DHCP option that matches the input code. Null is
 	 * returned if option is not set.
 	 * 
@@ -845,33 +841,33 @@ public class DHCPMessage {
 	 * @return the option matching input code
 	 */
 	public byte[] getOption(int inOptNum) {
-		if (this.optionsList == null) {
+		if(this.optionsList == null) {
 			initialize();
 		}
 		return this.optionsList.getOption((byte) inOptNum);
 	}
 	
-	/** 
-	 * Removes the specified DHCP option that matches the input code. 
+	/**
+	 * Removes the specified DHCP option that matches the input code.
 	 * 
 	 * @param inOptNum option number
 	 */
 	public void removeOption(int inOptNum) {
-		if (this.optionsList == null) {
+		if(this.optionsList == null) {
 			initialize();
 		}
 		this.optionsList.removeOption((byte) inOptNum);
 	}
 	
-	/** 
+	/**
 	 * Report whether or not the input option is set.
 	 * 
-	 * @param inOptNum  option number
+	 * @param inOptNum option number
 	 * 
 	 * @return is the given option set?
 	 */
 	public boolean IsOptSet(int inOptNum) {
-		if (this.optionsList == null) {
+		if(this.optionsList == null) {
 			initialize();
 		}
 		

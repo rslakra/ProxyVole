@@ -11,21 +11,24 @@ import com.btr.proxy.util.Logger.LogLevel;
 
 /*****************************************************************************
  * PAC parser using the Rhino JavaScript engine bundled with Java 1.6<br/>
- * If you need PAC support with Java 1.5 then you should have a look at 
+ * If you need PAC support with Java 1.5 then you should have a look at
  * RhinoPacScriptParser.
- *  
+ * 
  * More information about PAC can be found there:<br/>
- * <a href="http://en.wikipedia.org/wiki/Proxy_auto-config">Proxy_auto-config</a><br/>
- * <a href="http://homepages.tesco.net/~J.deBoynePollard/FGA/web-browser-auto-proxy-configuration.html">web-browser-auto-proxy-configuration</a>
+ * <a href=
+ * "http://en.wikipedia.org/wiki/Proxy_auto-config">Proxy_auto-config</a><br/>
+ * <a href=
+ * "http://homepages.tesco.net/~J.deBoynePollard/FGA/web-browser-auto-proxy-configuration.html">web-browser-auto-proxy-configuration</a>
  * </p>
+ * 
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2009
  ****************************************************************************/
 public class JavaxPacScriptParser implements PacScriptParser {
 	static final String SCRIPT_METHODS_OBJECT = "__pacutil";
-
+	
 	private final PacScriptSource source;
 	private final ScriptEngine engine;
-
+	
 	/*************************************************************************
 	 * Constructor
 	 * 
@@ -34,12 +37,11 @@ public class JavaxPacScriptParser implements PacScriptParser {
 	 * @throws ProxyEvaluationException
 	 *             on error.
 	 ************************************************************************/
-	public JavaxPacScriptParser(PacScriptSource source)
-			throws ProxyEvaluationException {
+	public JavaxPacScriptParser(PacScriptSource source) throws ProxyEvaluationException {
 		this.source = source;
 		this.engine = setupEngine();
 	}
-
+	
 	/*************************************************************************
 	 * Initializes the JavaScript engine and adds aliases for the functions
 	 * defined in ScriptMethods.
@@ -51,16 +53,16 @@ public class JavaxPacScriptParser implements PacScriptParser {
 		ScriptEngineManager mng = new ScriptEngineManager();
 		ScriptEngine engine = mng.getEngineByMimeType("text/javascript");
 		engine.put(SCRIPT_METHODS_OBJECT, new PacScriptMethods());
-
+		
 		Class<?> scriptMethodsClazz = ScriptMethods.class;
 		Method[] scriptMethods = scriptMethodsClazz.getMethods();
-
-		for (Method method : scriptMethods) {
+		
+		for(Method method : scriptMethods) {
 			String name = method.getName();
 			int args = method.getParameterTypes().length;
 			StringBuilder toEval = new StringBuilder(name).append(" = function(");
-			for (int i = 0; i < args; i++) {
-				if (i > 0) {
+			for(int i = 0; i < args; i++) {
+				if(i > 0) {
 					toEval.append(",");
 				}
 				toEval.append("arg").append(i);
@@ -70,25 +72,27 @@ public class JavaxPacScriptParser implements PacScriptParser {
 			String functionCall = buildFunctionCallCode(name, args);
 			
 			// If return type is java.lang.String convert it to a JS string
-			if (String.class.isAssignableFrom(method.getReturnType())) {
-				functionCall = "String("+functionCall+")";
+			if(String.class.isAssignableFrom(method.getReturnType())) {
+				functionCall = "String(" + functionCall + ")";
 			}
+			Logger.log(getClass(), LogLevel.ERROR, "functionCall:{0}", functionCall);
 			toEval.append(functionCall).append("; }");
+			
 			try {
+				Logger.log(getClass(), LogLevel.ERROR, "toEval:{0}", toEval);
 				engine.eval(toEval.toString());
-			} catch (ScriptException e) {
-				Logger.log(getClass(), LogLevel.ERROR,
-						"JS evaluation error when creating alias for " + name + ". error:{0}", e);
-				throw new ProxyEvaluationException(
-						"Error setting up script engine", e);
+			} catch(ScriptException e) {
+				Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error when creating alias for " + name + ". error:{0}", e);
+				throw new ProxyEvaluationException("Error setting up script engine", e);
 			}
 		}
-
+		
 		return engine;
 	}
-
+	
 	/*************************************************************************
 	 * Builds a JavaScript code snippet to call a function that we bind.
+	 * 
 	 * @param functionName of the bound function
 	 * @param args of the bound function
 	 * @return the JS code to invoke the method.
@@ -96,10 +100,9 @@ public class JavaxPacScriptParser implements PacScriptParser {
 	
 	private String buildFunctionCallCode(String functionName, int args) {
 		StringBuilder functionCall = new StringBuilder();
-		functionCall.append(SCRIPT_METHODS_OBJECT)
-			  .append(".").append(functionName).append("(");
-		for (int i = 0; i < args; i++) {
-			if (i > 0) {
+		functionCall.append(SCRIPT_METHODS_OBJECT).append(".").append(functionName).append("(");
+		for(int i = 0; i < args; i++) {
+			if(i > 0) {
 				functionCall.append(",");
 			}
 			functionCall.append("arg").append(i);
@@ -107,7 +110,7 @@ public class JavaxPacScriptParser implements PacScriptParser {
 		functionCall.append(")");
 		return functionCall.toString();
 	}
-
+	
 	/***************************************************************************
 	 * Gets the source of the PAC script used by this parser.
 	 * 
@@ -116,7 +119,7 @@ public class JavaxPacScriptParser implements PacScriptParser {
 	public PacScriptSource getScriptSource() {
 		return this.source;
 	}
-
+	
 	/*************************************************************************
 	 * Evaluates the given URL and host against the PAC script.
 	 * 
@@ -128,20 +131,17 @@ public class JavaxPacScriptParser implements PacScriptParser {
 	 * @throws ProxyEvaluationException
 	 *             on execution error.
 	 ************************************************************************/
-	public String evaluate(String url, String host)
-			throws ProxyEvaluationException {
+	public String evaluate(String url, String host) throws ProxyEvaluationException {
 		try {
-			StringBuilder script = new StringBuilder(
-					this.source.getScriptContent());
+			StringBuilder script = new StringBuilder(this.source.getScriptContent());
 			String evalMethod = " ;FindProxyForURL (\"" + url + "\",\"" + host + "\")";
 			script.append(evalMethod);
 			Object result = this.engine.eval(script.toString());
 			return (String) result;
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error:{0}.", e);
-			throw new ProxyEvaluationException(
-					"Error while executing PAC script: " + e.getMessage(), e);
+			throw new ProxyEvaluationException("Error while executing PAC script: " + e.getMessage(), e);
 		}
-
+		
 	}
 }

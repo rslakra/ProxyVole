@@ -206,7 +206,6 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 				p.load(new ByteArrayInputStream(proxyString.getBytes("ISO-8859-1")));
 			} catch(IOException e) {
 				Logger.log(getClass(), LogLevel.ERROR, "Error reading IE settings as properties: {0}", e);
-				
 				throw new ProxyException(e);
 			}
 		}

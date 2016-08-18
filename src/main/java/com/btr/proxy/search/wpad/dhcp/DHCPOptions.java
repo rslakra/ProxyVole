@@ -85,7 +85,7 @@ public class DHCPOptions {
 	public static final int OPTION_DHCP_CLIENT_IDENTIFIER = 61;
 	
 	/**
-	 *This inner class represent an entry in the Option Table
+	 * This inner class represent an entry in the Option Table
 	 */
 	
 	class DHCPOptionsEntry {
@@ -93,8 +93,7 @@ public class DHCPOptions {
 		protected byte length;
 		protected byte content[];
 		
-		public DHCPOptionsEntry(byte entryCode, byte entryLength,
-		    byte entryContent[]) {
+		public DHCPOptionsEntry(byte entryCode, byte entryLength, byte entryContent[]) {
 			this.code = entryCode;
 			this.length = entryLength;
 			this.content = entryContent;
@@ -114,6 +113,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Removes option with specified bytecode
+	 * 
 	 * @param entryCode The code of option to be removed
 	 */
 	
@@ -123,6 +123,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Returns true if option code is set in list; false otherwise
+	 * 
 	 * @param entryCode The node's option code
 	 * @return true if option is set, otherwise false
 	 */
@@ -132,6 +133,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Determines if list is empty
+	 * 
 	 * @return true if there are no options set, otherwise false
 	 */
 	public boolean isEmpty() {
@@ -140,22 +142,23 @@ public class DHCPOptions {
 	
 	/**
 	 * Fetches value of option by its option code
+	 * 
 	 * @param entryCode The node's option code
 	 * @return byte array containing the value of option entryCode.
 	 *         null is returned if option is not set.
 	 */
 	public byte[] getOption(byte entryCode) {
-		if (this.contains(entryCode)) {
+		if(this.contains(entryCode)) {
 			DHCPOptionsEntry ent = this.optionsTable.get(new Byte(entryCode));
 			return ent.content;
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
 	
 	/**
 	 * Changes an existing option to new value
+	 * 
 	 * @param entryCode The node's option code
 	 * @param value Content of node option
 	 */
@@ -166,6 +169,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Returns the option value of a specified option code in a byte array
+	 * 
 	 * @param length Length of option content
 	 * @param position Location in array of option node
 	 * @param options The byte array of options
@@ -173,7 +177,7 @@ public class DHCPOptions {
 	 */
 	private byte[] getArrayOption(int length, int position, byte options[]) {
 		byte value[] = new byte[length];
-		for (int i = 0; i < length; i++) {
+		for(int i = 0; i < length; i++) {
 			value[i] = options[position + i];
 		}
 		return value;
@@ -181,6 +185,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Converts an options byte array to a linked list
+	 * 
 	 * @param optionsArray The byte array representation of the options list
 	 */
 	public void internalize(byte[] optionsArray) {
@@ -190,7 +195,7 @@ public class DHCPOptions {
 		byte code, length;
 		byte value[];
 		
-		while (optionsArray[pos] != (byte) 255) { // until end option
+		while(optionsArray[pos] != (byte) 255) { // until end option
 			code = optionsArray[pos++];
 			length = optionsArray[pos++];
 			value = getArrayOption(length, pos, optionsArray);
@@ -201,6 +206,7 @@ public class DHCPOptions {
 	
 	/**
 	 * Converts a linked options list to a byte array
+	 * 
 	 * @return array representation of optionsTable
 	 */
 	// todo provide overflow return
@@ -215,11 +221,11 @@ public class DHCPOptions {
 		int position = 4;
 		Enumeration<DHCPOptionsEntry> e = this.optionsTable.elements();
 		
-		while (e.hasMoreElements()) {
+		while(e.hasMoreElements()) {
 			DHCPOptionsEntry entry = e.nextElement();
 			options[position++] = entry.code;
 			options[position++] = entry.length;
-			for (int i = 0; i < entry.length; ++i) {
+			for(int i = 0; i < entry.length; ++i) {
 				options[position++] = entry.content[i];
 			}
 		}
@@ -229,7 +235,7 @@ public class DHCPOptions {
 	}
 	
 	/**
-	 *	Prints the options linked list: For testing only.
+	 * Prints the options linked list: For testing only.
 	 */
 	public void printList() {
 		Logger.log(getClass(), LogLevel.DEBUG, "optionsTable:{0}", this.optionsTable.toString());

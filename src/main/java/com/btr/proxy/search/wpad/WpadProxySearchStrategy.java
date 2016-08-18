@@ -84,6 +84,7 @@ public class WpadProxySearchStrategy implements ProxySearchStrategy {
 			result.setProperty("url", pacScriptUrl);
 			return result;
 		} catch (IOException e) {
+			Logger.log(getClass(), LogLevel.ERROR, "readSettings. error:{0}", e);
 			// Ignore and return empty properties.
 			return new Properties();
 		}

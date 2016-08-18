@@ -81,7 +81,7 @@ final class DLLManager {
 				}
 			}
 		} catch (Exception e) {
-			Logger.log(DLLManager.class, LogLevel.DEBUG, "Error cleaning up temporary dll files. ", e);
+			Logger.log(DLLManager.class, LogLevel.ERROR, "Error cleaning up temporary dll files. error:{0}", e);
 		}
 	}
 
@@ -134,6 +134,7 @@ final class DLLManager {
 				c.close();
 			}
 		} catch (IOException e) {
+			Logger.log(DLLManager.class, LogLevel.ERROR, "Error closing stream! error:{0}", e);
 			// Ignore cleanup errors
 		}
 	}

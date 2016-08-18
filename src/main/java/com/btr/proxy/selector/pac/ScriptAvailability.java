@@ -26,19 +26,19 @@ abstract class ScriptAvailability {
 			engine = m.invoke(managerClass.newInstance(), "text/javascript");
 		} catch (ClassNotFoundException e) {
 			// javax.script not available
-			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "ClassNotFoundException", e);
+			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		} catch (NoSuchMethodException e) {
 			// javax.script not available
-			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "NoSuchMethodException", e);
+			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		} catch (IllegalAccessException e) {
 			// javax.script not available
-			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "IllegalAccessException", e);
+			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		} catch (InvocationTargetException e) {
 			// javax.script not available
-			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "InvocationTargetException", e);
+			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		} catch (InstantiationException e) {
 			// javax.script not available
-			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "InstantiationException", e);
+			Logger.log(ScriptAvailability.class, LogLevel.ERROR, "Exception:{0}", e);
 		}
 
 		return engine != null;

@@ -27,7 +27,8 @@ import com.btr.proxy.util.Logger.LogLevel;
 
 /*****************************************************************************
  * Small test application that allows you to select a proxy search strategy
- * and then validate URLs against it. 
+ * and then validate URLs against it.
+ * 
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2009
  ****************************************************************************/
 
@@ -38,9 +39,9 @@ public class ProxyTester extends JFrame {
 	private JComboBox modes;
 	private JButton testButton;
 	private JTextField urlField;
-
+	
 	private JTextArea logArea;
-
+	
 	/*************************************************************************
 	 * Constructor
 	 ************************************************************************/
@@ -63,7 +64,7 @@ public class ProxyTester extends JFrame {
 		this.modes = new JComboBox(ProxySearch.Strategy.values());
 		jPanel.add(this.modes);
 		jPanel.add(new JLabel("URL:"));
-		this.urlField = new JTextField(30); 
+		this.urlField = new JTextField(30);
 		this.urlField.setText("http://code.google.com/p/proxy-vole/");
 		jPanel.add(this.urlField);
 		
@@ -74,18 +75,18 @@ public class ProxyTester extends JFrame {
 			}
 		});
 		jPanel.add(this.testButton);
-
+		
 		this.logArea = new JTextArea(10, 50);
 		JPanel contenPane = new JPanel(new BorderLayout());
 		contenPane.add(jPanel, BorderLayout.NORTH);
 		contenPane.add(new JScrollPane(this.logArea), BorderLayout.CENTER);
 		setContentPane(contenPane);
-
+		
 		pack();
 		setLocationRelativeTo(null);
 		installLogger();
 	}
-
+	
 	/*************************************************************************
 	 * Install the framework logger.
 	 ************************************************************************/
@@ -93,56 +94,56 @@ public class ProxyTester extends JFrame {
 	private void installLogger() {
 		Logger.setBackend(new Logger.LogBackEnd() {
 			public void log(Class<?> clazz, LogLevel loglevel, String msg, Object... params) {
-				ProxyTester.this.logArea.append(loglevel+"\t"+MessageFormat.format(msg, params)+"\n");
+				ProxyTester.this.logArea.append(loglevel + "\t" + MessageFormat.format(msg, params) + "\n");
 			}
+			
 			public boolean isLogginEnabled(LogLevel logLevel) {
 				return true;
 			}
 		});
 	}
-
+	
 	/*************************************************************************
 	 * Test the given URL with the given Proxy Search.
 	 ************************************************************************/
 	
 	protected void testUrl() {
 		try {
-			if (this.urlField.getText().trim().length() == 0) {
+			if(this.urlField.getText().trim().length() == 0) {
 				JOptionPane.showMessageDialog(this, "Please enter an URL first.");
 				return;
 			}
 			
 			this.logArea.setText("");
-
+			
 			Strategy pss = (Strategy) this.modes.getSelectedItem();
 			ProxySearch ps = new ProxySearch();
 			ps.addStrategy(pss);
 			ProxySelector psel = ps.getProxySelector();
-			if (psel == null) {
+			if(psel == null) {
 				JOptionPane.showMessageDialog(this, "No proxy settings available for this mode.");
 				return;
 			}
 			ProxySelector.setDefault(psel);
 			
-			URL url = new URL(this.urlField.getText().trim()); 
+			URL url = new URL(this.urlField.getText().trim());
 			List<Proxy> result = psel.select(url.toURI());
-			if (result == null || result.size() == 0) {
+			if(result == null || result.size() == 0) {
 				JOptionPane.showMessageDialog(this, "No proxy found for this url.");
 				return;
 			}
 			
-			JOptionPane.showMessageDialog(this, 
-					"Proxy Settings found using "+pss+" strategy.\n" +
-					"Proxy used for URL is: "+result.get(0));
+			JOptionPane.showMessageDialog(this, "Proxy Settings found using " + pss + " strategy.\n" + "Proxy used for URL is: " + result.get(0));
 			
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(this, "Error:"+e.getMessage(), "Error checking URL.", JOptionPane.ERROR_MESSAGE);
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(this, "Error:" + e.getMessage(), "Error checking URL.", JOptionPane.ERROR_MESSAGE);
 		}
 		
 	}
-
+	
 	/*************************************************************************
 	 * Main entry point for the application.
+	 * 
 	 * @param args command line arguments.
 	 ************************************************************************/
 	
@@ -154,10 +155,9 @@ public class ProxyTester extends JFrame {
 				ProxyTester mainFrame = new ProxyTester();
 				mainFrame.setVisible(true);
 			}
-
 		});
 	}
-
+	
 	/*************************************************************************
 	 * Change the L&F to the system default.
 	 ************************************************************************/
@@ -165,9 +165,8 @@ public class ProxyTester extends JFrame {
 	private static void setLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+		} catch(Exception e) {
 			// Use default
 		}
 	}
 }
-

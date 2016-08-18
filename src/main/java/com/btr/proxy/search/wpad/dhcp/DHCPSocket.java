@@ -8,6 +8,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /**
  * This class represents a Socket for sending DHCP Messages
  * 
@@ -27,7 +30,7 @@ public class DHCPSocket extends DatagramSocket {
 	 */
 	private int mtu = 1500;
 	
-	/** 
+	/**
 	 * Constructor for creating DHCPSocket on a specific port on the local
 	 * machine.
 	 * 
@@ -71,36 +74,33 @@ public class DHCPSocket extends DatagramSocket {
 		InetAddress dest = null;
 		try {
 			dest = InetAddress.getByName(inMessage.getDestinationAddress());
-		}
-		catch (UnknownHostException e) {
+		} catch(UnknownHostException e) {
+			Logger.log(DHCPSocket.class, LogLevel.ERROR, "UnknownHostException! error:{0}", e);
 		}
 		
-		DatagramPacket outgoing = new DatagramPacket(data, data.length, dest,
-		    inMessage.getPort());
-		
+		DatagramPacket outgoing = new DatagramPacket(data, data.length, dest, inMessage.getPort());
 		send(outgoing); // send outgoing message
 	}
 	
-	/** 
+	/**
 	 * Receives a datagram packet containing a DHCP Message into
 	 * a DHCPMessage object.
 	 * 
-	 * @return <code>true</code> if message is received, 
-	 *         <code>false</code> if timeout occurs.  
+	 * @return <code>true</code> if message is received,
+	 *         <code>false</code> if timeout occurs.
 	 * @param outMessage DHCPMessage object to receive new message into
 	 */
 	public synchronized boolean receive(DHCPMessage outMessage) {
 		try {
-			DatagramPacket incoming = new DatagramPacket(new byte[this.mtu],
-			    this.mtu);
-			//gSocket.
+			DatagramPacket incoming = new DatagramPacket(new byte[this.mtu], this.mtu);
+			// gSocket.
 			receive(incoming); // block on receive for SOCKET_TIMEOUT
-			
 			outMessage.internalize(incoming.getData());
-		}
-		catch (java.io.IOException e) {
+		} catch(java.io.IOException e) {
+			Logger.log(DHCPSocket.class, LogLevel.ERROR, "receive! error:{0}", e);
 			return false;
-		} // end catch
+		}
+		
 		return true;
 	}
 }

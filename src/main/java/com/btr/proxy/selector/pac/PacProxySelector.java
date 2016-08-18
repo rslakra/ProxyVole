@@ -12,29 +12,29 @@ import com.btr.proxy.util.Logger;
 import com.btr.proxy.util.Logger.LogLevel;
 import com.btr.proxy.util.ProxyUtil;
 
-
 /*****************************************************************************
  * ProxySelector that will use a PAC script to find an proxy for a given URI.
  *
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2009
  ****************************************************************************/
 public class PacProxySelector extends ProxySelector {
-
+	
 	private final boolean JAVAX_PARSER = ScriptAvailability.isJavaxScriptingAvailable();
-
+	
 	// private static final String PAC_PROXY = "PROXY";
 	private static final String PAC_SOCKS = "SOCKS";
 	private static final String PAC_DIRECT = "DIRECT";
-
+	
 	private PacScriptParser pacScriptParser;
-
+	
 	private static volatile boolean enabled = true;
-
+	
 	/*************************************************************************
 	 * Constructor
-	 * @param pacSource the source for the PAC file. 
+	 * 
+	 * @param pacSource the source for the PAC file.
 	 ************************************************************************/
-
+	
 	public PacProxySelector(PacScriptSource pacSource) {
 		super();
 		selectEngine(pacSource);
@@ -43,6 +43,7 @@ public class PacProxySelector extends ProxySelector {
 	/*************************************************************************
 	 * Can be used to enable / disable the proxy selector.
 	 * If disabled it will return DIRECT for all urls.
+	 * 
 	 * @param enable the new status to set.
 	 ************************************************************************/
 	
@@ -52,132 +53,138 @@ public class PacProxySelector extends ProxySelector {
 	
 	/*************************************************************************
 	 * Checks if the selector is currently enabled.
+	 * 
 	 * @return true if enabled else false.
 	 ************************************************************************/
 	
 	public static boolean isEnabled() {
 		return enabled;
 	}
-
+	
 	/*************************************************************************
 	 * Selects one of the available PAC parser engines.
+	 * 
 	 * @param pacSource to use as input.
 	 ************************************************************************/
 	
 	private void selectEngine(PacScriptSource pacSource) {
 		try {
-			if (this.JAVAX_PARSER) {
-				Logger.log(getClass(), LogLevel.INFO,
-						"Using javax.script JavaScript engine.");
+			if(this.JAVAX_PARSER) {
+				Logger.log(getClass(), LogLevel.INFO, "Using javax.script JavaScript engine.");
 				this.pacScriptParser = new JavaxPacScriptParser(pacSource);
 			} else {
-				Logger.log(getClass(), LogLevel.INFO,
-						"Using Rhino JavaScript engine.");
+				Logger.log(getClass(), LogLevel.INFO, "Using Rhino JavaScript engine.");
 				this.pacScriptParser = new RhinoPacScriptParser(pacSource);
 			}
 			Logger.log(getClass(), LogLevel.TRACE, "selectEngine:{0}", pacScriptParser);
-		} catch (Exception e) {
+		} catch(Exception e) {
 			Logger.log(getClass(), LogLevel.ERROR, "PAC parser error:{0}.", e);
 		}
 	}
-
+	
 	/*************************************************************************
 	 * connectFailed
-	 * @see java.net.ProxySelector#connectFailed(java.net.URI, java.net.SocketAddress, java.io.IOException)
+	 * 
+	 * @see java.net.ProxySelector#connectFailed(java.net.URI,
+	 *      java.net.SocketAddress, java.io.IOException)
 	 ************************************************************************/
 	@Override
 	public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 		// Not used.
 	}
-
+	
 	/*************************************************************************
 	 * select
+	 * 
 	 * @see java.net.ProxySelector#select(java.net.URI)
 	 ************************************************************************/
 	@Override
 	public List<Proxy> select(URI uri) {
-		if (uri == null) {
+		if(uri == null) {
 			throw new IllegalArgumentException("URI must not be null.");
 		}
 		
 		// Fix for Java 1.6.16+ where we get a infinite loop because
 		// URL.connect(Proxy.NO_PROXY) does not work as expected.
-		if (!enabled) {
+		if(!enabled) {
+			Logger.log(getClass(), LogLevel.INFO, "enabled:{0}, so using no noProxyList.", enabled);
 			return ProxyUtil.noProxyList();
 		}
-
+		
 		return findProxy(uri);
 	}
-
+	
 	/*************************************************************************
 	 * Evaluation of the given URL with the PAC-file.
 	 * 
 	 * Two cases can be handled here:
-	 * DIRECT 			Fetch the object directly from the content HTTP server denoted by its URL
-	 * PROXY name:port 	Fetch the object via the proxy HTTP server at the given location (name and port) 
+	 * DIRECT Fetch the object directly from the content HTTP server denoted by
+	 * its URL
+	 * PROXY name:port Fetch the object via the proxy HTTP server at the given
+	 * location (name and port)
 	 * 
 	 * @param uri <code>URI</code> to be evaluated.
 	 * @return <code>Proxy</code>-object list as result of the evaluation.
 	 ************************************************************************/
-
+	
 	private List<Proxy> findProxy(URI uri) {
 		try {
 			List<Proxy> proxies = new ArrayList<Proxy>();
-			String parseResult = this.pacScriptParser.evaluate(uri.toString(),
-					uri.getHost());
+			String parseResult = this.pacScriptParser.evaluate(uri.toString(), uri.getHost());
 			Logger.log(getClass(), LogLevel.TRACE, "parseResult:{0}", parseResult);
 			String[] proxyDefinitions = parseResult.split("[;]");
-			for (String proxyDef : proxyDefinitions) {
-				if (proxyDef.trim().length() > 0) {
+			for(String proxyDef : proxyDefinitions) {
+				if(proxyDef.trim().length() > 0) {
 					proxies.add(buildProxyFromPacResult(proxyDef));
 				}
 			}
-
+			
 			Logger.log(getClass(), LogLevel.TRACE, "proxies:{0}", proxies);
 			return proxies;
-		} catch (ProxyEvaluationException e) {
+		} catch(ProxyEvaluationException e) {
 			Logger.log(getClass(), LogLevel.ERROR, "PAC resolving error:{0}.", e);
 			return ProxyUtil.noProxyList();
 		}
 	}
-
+	
 	/*************************************************************************
 	 * The proxy evaluator will return a proxy string. This method will
 	 * take this string and build a matching <code>Proxy</code> for it.
+	 * 
 	 * @param pacResult the result from the PAC parser.
 	 * @return a Proxy
 	 ************************************************************************/
-
+	
 	private Proxy buildProxyFromPacResult(String pacResult) {
 		Logger.log(getClass(), LogLevel.TRACE, "pacResult:{0}", pacResult);
-		if (pacResult == null || pacResult.trim().length() < 6) {
+		if(pacResult == null || pacResult.trim().length() < 6) {
 			Logger.log(getClass(), LogLevel.TRACE, "NO_PROXY");
 			return Proxy.NO_PROXY;
 		}
 		
 		String proxyDef = pacResult.trim();
-		if (proxyDef.toUpperCase().startsWith(PAC_DIRECT)) {
+		if(proxyDef.toUpperCase().startsWith(PAC_DIRECT)) {
 			Logger.log(getClass(), LogLevel.TRACE, "DIRECT - NO_PROXY");
 			return Proxy.NO_PROXY;
 		}
-
+		
 		// Check proxy type.
 		Proxy.Type type = Proxy.Type.HTTP;
-		if (proxyDef.toUpperCase().startsWith(PAC_SOCKS)) {
+		if(proxyDef.toUpperCase().startsWith(PAC_SOCKS)) {
 			type = Proxy.Type.SOCKS;
 		}
-
+		
 		String host = proxyDef.substring(6);
 		Integer port = ProxyUtil.DEFAULT_PROXY_PORT;
 		Logger.log(getClass(), LogLevel.TRACE, "host:{0}, port:{1}, type:{2}", host, port, type);
-
+		
 		// Split port from host
 		int indexOfPort = host.indexOf(':');
-		if (indexOfPort != -1) {
-			port = Integer.parseInt(host.substring(indexOfPort+1).trim());
+		if(indexOfPort != -1) {
+			port = Integer.parseInt(host.substring(indexOfPort + 1).trim());
 			host = host.substring(0, indexOfPort).trim();
 		}
-
+		
 		Logger.log(getClass(), LogLevel.TRACE, "host:{0}, port:{1}", host, port);
 		SocketAddress socketAddress = InetSocketAddress.createUnresolved(host, port);
 		Logger.log(getClass(), LogLevel.TRACE, "socketAddress:{0}", socketAddress);
