@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /**
  * This class represents a DHCP Message.
  * 
@@ -441,7 +444,7 @@ public class DHCPMessage {
 			this.optionsList.internalize(options);
 		}
 		catch (IOException e) {
-			System.err.println(e);
+			Logger.log(getClass(), LogLevel.ERROR, "Error creating DHCPMessage! error:{0}", e);
 		}
 	}
 
@@ -491,7 +494,7 @@ public class DHCPMessage {
 			options = this.optionsList.externalize();
 			outStream.write(options, 0, 312);
 		} catch (IOException e) {
-			System.err.println(e);
+			Logger.log(getClass(), LogLevel.ERROR, "Error externalizing! error:{0}", e);
 		}
 		
 		// extract the byte array from the Stream
@@ -538,8 +541,8 @@ public class DHCPMessage {
 			this.optionsList.internalize(options);
 		}
 		catch (IOException e) {
-			System.err.println(e);
-		} // end catch
+			Logger.log(getClass(), LogLevel.ERROR, "Error internalizing! error:{0}", e);
+		}
 		
 		return this;
 	}
@@ -691,7 +694,7 @@ public class DHCPMessage {
 			this.destination_IP = InetAddress.getByName(inHost);
 		}
 		catch (Exception e) {
-			System.err.println(e);
+			Logger.log(getClass(), LogLevel.ERROR, "Error setting destination host! error:{0}", e);
 		}
 	}
 	

@@ -27,6 +27,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.btr.proxy.util.Logger.LogLevel;
+
 /**
  * Plist xml handling (serialization and deserialization)
  * <p>
@@ -151,7 +153,7 @@ public final class PListParser
          ************************************************************************/
         
         public void dump() {
-			System.out.println("PList");
+			Logger.log(getClass(), LogLevel.ERROR, "PList");
         	dumpInternal(this, 1);
         }
 

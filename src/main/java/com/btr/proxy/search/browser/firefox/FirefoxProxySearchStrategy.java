@@ -125,11 +125,12 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 
 		// Wrap in white list filter.
 		String noProxyList = settings.getProperty("network.proxy.no_proxies_on", null);
+		Logger.log(getClass(), LogLevel.TRACE, "Firefox uses proxy bypass list for: {0}", noProxyList);
 		if (result != null && noProxyList != null && noProxyList.trim().length() > 0) {
-			Logger.log(getClass(), LogLevel.TRACE, "Firefox uses proxy bypass list for: {0}", noProxyList);
 			result = new ProxyBypassListSelector(noProxyList, result);
 		}
 		
+		Logger.log(getClass(), LogLevel.TRACE, "getProxySelector(), result:{0}", result);
 		return result;
 	}
 
@@ -144,7 +145,7 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 			Properties settings = this.settingsParser.parseSettings(this.profileScanner);
 			return settings;
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Error parsing settings", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Error parsing settings! error:{0}", e);
 			throw new ProxyException(e);
 		}
 	}
@@ -221,10 +222,10 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 			Properties settings) throws NumberFormatException {
 		String proxyHost = settings.getProperty("network.proxy.socks", null);
         int proxyPort = Integer.parseInt(settings.getProperty("network.proxy.socks_port", "0"));
-        if (proxyHost != null && proxyPort != 0) {
-                Logger.log(getClass(), LogLevel.TRACE, "Firefox socks proxy is {0}:{1}", proxyHost, proxyPort);
-                ps.setSelector("socks", new FixedSocksSelector(proxyHost, proxyPort));
-        }
+		Logger.log(getClass(), LogLevel.TRACE, "Firefox socks proxy is {0}:{1}", proxyHost, proxyPort);
+		if(proxyHost != null && proxyPort != 0) {
+			ps.setSelector("socks", new FixedSocksSelector(proxyHost, proxyPort));
+		}
 	}
 
 	/*************************************************************************
@@ -237,8 +238,8 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 			Properties settings) throws NumberFormatException {
 		String proxyHost = settings.getProperty("network.proxy.ssl", null);
 		int proxyPort = Integer.parseInt(settings.getProperty("network.proxy.ssl_port", "0"));
+		Logger.log(getClass(), LogLevel.TRACE, "Firefox secure proxy is {0}:{1}", proxyHost, proxyPort);
 		if (proxyHost != null && proxyPort != 0) {
-			Logger.log(getClass(), LogLevel.TRACE, "Firefox secure proxy is {0}:{1}", proxyHost, proxyPort);
 			ps.setSelector("https", new FixedProxySelector(proxyHost, proxyPort));
 			ps.setSelector("sftp", new FixedProxySelector(proxyHost, proxyPort));
 		}
@@ -258,8 +259,8 @@ public class FirefoxProxySearchStrategy implements ProxySearchStrategy {
 		
 		String proxyHost = settings.getProperty("network.proxy."+protocol, null);
 		int proxyPort = Integer.parseInt(settings.getProperty("network.proxy."+protocol+"_port", "0"));
+		Logger.log(getClass(), LogLevel.TRACE, "Firefox " + protocol + " proxy is {0}:{1}", proxyHost, proxyPort);
 		if (proxyHost != null && proxyPort != 0) {
-			Logger.log(getClass(), LogLevel.TRACE, "Firefox "+protocol+" proxy is {0}:{1}", proxyHost, proxyPort);
 			ps.setSelector(protocol, new FixedProxySelector(proxyHost, proxyPort));
 		}
 	}

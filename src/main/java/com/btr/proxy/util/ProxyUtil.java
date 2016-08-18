@@ -11,6 +11,7 @@ import com.btr.proxy.selector.fixed.FixedProxySelector;
 import com.btr.proxy.selector.pac.PacProxySelector;
 import com.btr.proxy.selector.pac.PacScriptSource;
 import com.btr.proxy.selector.pac.UrlPacScriptSource;
+import com.btr.proxy.util.Logger.LogLevel;
 
 /*****************************************************************************
  * Small helper class for some common utility methods.
@@ -61,6 +62,8 @@ public class ProxyUtil {
 			list.add(Proxy.NO_PROXY);
 			noProxyList = Collections.unmodifiableList(list);
 		}
+		
+		Logger.log(ProxyUtil.class, LogLevel.TRACE, "noProxyList:{0}", noProxyList);
 		return noProxyList;
 	}
 	

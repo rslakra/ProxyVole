@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /*****************************************************************************
  * Implements a cache that can be used to warp it around an existing ProxySelector.
  * You can specify a maximum cache size and a "time to live" for positive resolves. 
@@ -82,6 +85,7 @@ public class BufferedProxySelector extends ProxySelector {
 		CacheEntry entry = this.cache.get(cacheKey);
 		if (entry == null || entry.isExpired()) { 
 			List<Proxy> result = this.delegate.select(uri);
+			Logger.log(getClass(), LogLevel.TRACE, "result:{0}", result);
 			entry = new CacheEntry(result, System.nanoTime()+this.ttl*1000*1000);
 				
 			synchronized (this.cache) {

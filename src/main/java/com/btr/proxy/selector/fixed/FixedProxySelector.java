@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /*****************************************************************************
  * This proxy selector is configured with a fixed proxy. This proxy will be 
  * returned for all URIs passed to the select method.
@@ -29,7 +32,7 @@ public class FixedProxySelector extends ProxySelector {
 	
 	public FixedProxySelector(Proxy proxy) {
 		super();
-
+		Logger.log(getClass(), LogLevel.TRACE, "FixedProxySelector(), proxy:{0}", proxy);
 		List<Proxy> list = new ArrayList<Proxy>(1);
 		list.add(proxy);
 		this.proxyList = Collections.unmodifiableList(list);

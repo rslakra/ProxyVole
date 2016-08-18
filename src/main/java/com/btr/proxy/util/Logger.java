@@ -25,15 +25,13 @@ public class Logger {
 		 * @param msg the message format string.
 		 * @param params the message parameters for the format string.
 		 ************************************************************************/
-		
 		public void log(Class<?> clazz, LogLevel loglevel, String msg, Object ...params);
-
+		
 		/*************************************************************************
 		 * Can be used to test if a given logging level is enabled.  
 		 * @param logLevel the loglevel to test.
 		 * @return true if enabled, else false.
 		 ************************************************************************/
-		
 		public boolean isLogginEnabled(LogLevel logLevel);
 	}
 	
@@ -64,7 +62,6 @@ public class Logger {
 	 * @param msg the message format string.
 	 * @param params the message parameters for the format string.
 	 ************************************************************************/
-	
 	public static void log(Class<?> clazz, LogLevel loglevel, String msg, Object ...params) {
 		if (backend != null) {
 			backend.log(clazz, loglevel, msg, params);

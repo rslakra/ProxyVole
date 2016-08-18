@@ -124,7 +124,7 @@ public class GnomeDConfProxySearchStrategy implements ProxySearchStrategy {
 		try {
 			parseSettings(settings);
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings read error.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings read error. error:{0}", e);
 			throw new ProxyException(e);
 		}
 		return settings;

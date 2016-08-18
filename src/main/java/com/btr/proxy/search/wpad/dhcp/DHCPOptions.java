@@ -3,6 +3,9 @@ package com.btr.proxy.search.wpad.dhcp;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /**
  * This class represents a linked list of options for a DHCP message.
  * Its purpose is to ease option handling such as add, remove or change.
@@ -229,6 +232,6 @@ public class DHCPOptions {
 	 *	Prints the options linked list: For testing only.
 	 */
 	public void printList() {
-		System.out.println(this.optionsTable.toString());
+		Logger.log(getClass(), LogLevel.DEBUG, "optionsTable:{0}", this.optionsTable.toString());
 	}
 }

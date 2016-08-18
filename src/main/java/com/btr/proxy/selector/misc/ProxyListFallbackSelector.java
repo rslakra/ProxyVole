@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /*****************************************************************************
  * Implements a fallback selector to warp it around an existing ProxySelector.
  * This will remove proxies from a list of proxies and implement an automatic
@@ -69,6 +72,7 @@ public class ProxyListFallbackSelector extends ProxySelector {
 	public List<Proxy> select(URI uri) {
 		cleanupCache();
 		List<Proxy> proxyList = this.delegate.select(uri);
+		Logger.log(getClass(), LogLevel.TRACE, "proxyList:{0}", proxyList);
 		List<Proxy> result = filterUnresponsiveProxiesFromList(proxyList);
 		return result;
 	}

@@ -3,6 +3,9 @@ package com.btr.proxy.selector.pac;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
+
 /****************************************************************************
  * Utility to check availablility of javax.script
  * 
@@ -23,14 +26,19 @@ abstract class ScriptAvailability {
 			engine = m.invoke(managerClass.newInstance(), "text/javascript");
 		} catch (ClassNotFoundException e) {
 			// javax.script not available
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "ClassNotFoundException", e);
 		} catch (NoSuchMethodException e) {
 			// javax.script not available
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "NoSuchMethodException", e);
 		} catch (IllegalAccessException e) {
 			// javax.script not available
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "IllegalAccessException", e);
 		} catch (InvocationTargetException e) {
 			// javax.script not available
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "InvocationTargetException", e);
 		} catch (InstantiationException e) {
 			// javax.script not available
+			Logger.log(ScriptAvailability.class, LogLevel.TRACE, "InstantiationException", e);
 		}
 
 		return engine != null;

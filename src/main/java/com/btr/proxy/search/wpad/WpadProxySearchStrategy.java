@@ -61,7 +61,7 @@ public class WpadProxySearchStrategy implements ProxySearchStrategy {
 			Logger.log(getClass(), LogLevel.TRACE, "PAC script url found: {0}", pacScriptUrl);
 			return ProxyUtil.buildPacSelectorForUrl(pacScriptUrl);
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Error during WPAD search.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Error during WPAD search. error:{0}", e);
 			throw new ProxyException(e);
 		}
 	}

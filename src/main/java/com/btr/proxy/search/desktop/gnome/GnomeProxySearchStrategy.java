@@ -131,7 +131,7 @@ public class GnomeProxySearchStrategy implements ProxySearchStrategy {
 			parseSettings("/system/proxy/", settings);
 			parseSettings("/system/http_proxy/", settings);
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings file error.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings file error:{0}.", e);
 			throw new ProxyException(e);
 		}
 		return settings;
@@ -307,10 +307,10 @@ public class GnomeProxySearchStrategy implements ProxySearchStrategy {
 				entry = entry.getNextSibling();
 			}
 		} catch (SAXException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings parse error", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings parse error:{0}", e);
 			throw new IOException(e.getMessage());
 		} catch (ParserConfigurationException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings parse error", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Gnome settings parse error:{0}", e);
 			throw new IOException(e.getMessage());
 		}
 		

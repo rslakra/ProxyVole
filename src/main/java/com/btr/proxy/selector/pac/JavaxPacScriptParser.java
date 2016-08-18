@@ -78,7 +78,7 @@ public class JavaxPacScriptParser implements PacScriptParser {
 				engine.eval(toEval.toString());
 			} catch (ScriptException e) {
 				Logger.log(getClass(), LogLevel.ERROR,
-						"JS evaluation error when creating alias for " + name + ".", e);
+						"JS evaluation error when creating alias for " + name + ". error:{0}", e);
 				throw new ProxyEvaluationException(
 						"Error setting up script engine", e);
 			}
@@ -138,7 +138,7 @@ public class JavaxPacScriptParser implements PacScriptParser {
 			Object result = this.engine.eval(script.toString());
 			return (String) result;
 		} catch (Exception e) {
-			Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error:{0}.", e);
 			throw new ProxyEvaluationException(
 					"Error while executing PAC script: " + e.getMessage(), e);
 		}

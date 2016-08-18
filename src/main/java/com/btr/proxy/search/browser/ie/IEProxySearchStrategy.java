@@ -35,11 +35,8 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 	 ************************************************************************/
 
 	public ProxySelector getProxySelector() throws ProxyException {
-		
 		Logger.log(getClass(), LogLevel.TRACE, "Detecting IE proxy settings");
-		
 		Win32IESettings ieSettings = readSettings();
-		
 		ProxySelector result = createPacSelector(ieSettings);
 		if (result == null) {
 			result = createFixedProxySelector(ieSettings);
@@ -76,12 +73,14 @@ public class IEProxySearchStrategy implements ProxySearchStrategy {
 		if (pacUrl == null) {
 			pacUrl = ieSettings.getAutoConfigUrl();
 		}
+
+		Logger.log(getClass(), LogLevel.TRACE, "IE uses script:" + pacUrl);
 		if (pacUrl != null && pacUrl.trim().length() > 0) {
-			Logger.log(getClass(), LogLevel.TRACE, "IE uses script: "+pacUrl);
-		     
-			// Fix for issue 9
-			// If the IE has a file URL and it only starts has 2 slashes, 
-			// add a third so it can be properly converted to the URL class
+			/*
+			 * Fix for issue 9. If the IE has a file URL and it only starts has
+			 * 2 slashes, add a third so it can be properly converted to the URL
+			 * class
+			 */
 		    if (pacUrl.startsWith("file://") && !pacUrl.startsWith("file:///")) {
 		    	pacUrl = "file:///" + pacUrl.substring(7);
 		    }

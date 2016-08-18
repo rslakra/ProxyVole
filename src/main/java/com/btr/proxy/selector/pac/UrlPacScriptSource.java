@@ -99,9 +99,8 @@ public class UrlPacScriptSource implements PacScriptSource {
 			} 
 			return result.toString();
 		} catch (Exception e) {
-			System.out.println(System.getProperty("user.dir"));
-			Logger.log(getClass(), LogLevel.ERROR, "File reading error.", e);
-			throw new IOException(e.getMessage());
+			Logger.log(getClass(), LogLevel.ERROR, "File reading error. userDir:{0}, error:{1}", System.getProperty("user.dir"), e);
+			throw new IOException(e);
 		}
 	}
 

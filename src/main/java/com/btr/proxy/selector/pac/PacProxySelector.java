@@ -75,8 +75,9 @@ public class PacProxySelector extends ProxySelector {
 						"Using Rhino JavaScript engine.");
 				this.pacScriptParser = new RhinoPacScriptParser(pacSource);
 			}
+			Logger.log(getClass(), LogLevel.TRACE, "selectEngine:{0}", pacScriptParser);
 		} catch (Exception e) {
-			Logger.log(getClass(), LogLevel.ERROR, "PAC parser error.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "PAC parser error:{0}.", e);
 		}
 	}
 
@@ -124,15 +125,18 @@ public class PacProxySelector extends ProxySelector {
 			List<Proxy> proxies = new ArrayList<Proxy>();
 			String parseResult = this.pacScriptParser.evaluate(uri.toString(),
 					uri.getHost());
+			Logger.log(getClass(), LogLevel.TRACE, "parseResult:{0}", parseResult);
 			String[] proxyDefinitions = parseResult.split("[;]");
 			for (String proxyDef : proxyDefinitions) {
 				if (proxyDef.trim().length() > 0) {
 					proxies.add(buildProxyFromPacResult(proxyDef));
 				}
 			}
+
+			Logger.log(getClass(), LogLevel.TRACE, "proxies:{0}", proxies);
 			return proxies;
 		} catch (ProxyEvaluationException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "PAC resolving error.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "PAC resolving error:{0}.", e);
 			return ProxyUtil.noProxyList();
 		}
 	}
@@ -145,11 +149,15 @@ public class PacProxySelector extends ProxySelector {
 	 ************************************************************************/
 
 	private Proxy buildProxyFromPacResult(String pacResult) {
+		Logger.log(getClass(), LogLevel.TRACE, "pacResult:{0}", pacResult);
 		if (pacResult == null || pacResult.trim().length() < 6) {
+			Logger.log(getClass(), LogLevel.TRACE, "NO_PROXY");
 			return Proxy.NO_PROXY;
 		}
+		
 		String proxyDef = pacResult.trim();
 		if (proxyDef.toUpperCase().startsWith(PAC_DIRECT)) {
+			Logger.log(getClass(), LogLevel.TRACE, "DIRECT - NO_PROXY");
 			return Proxy.NO_PROXY;
 		}
 
@@ -161,6 +169,7 @@ public class PacProxySelector extends ProxySelector {
 
 		String host = proxyDef.substring(6);
 		Integer port = ProxyUtil.DEFAULT_PROXY_PORT;
+		Logger.log(getClass(), LogLevel.TRACE, "host:{0}, port:{1}, type:{2}", host, port, type);
 
 		// Split port from host
 		int indexOfPort = host.indexOf(':');
@@ -169,8 +178,10 @@ public class PacProxySelector extends ProxySelector {
 			host = host.substring(0, indexOfPort).trim();
 		}
 
-		SocketAddress adr = InetSocketAddress.createUnresolved(host, port);
-		return new Proxy(type, adr);
+		Logger.log(getClass(), LogLevel.TRACE, "host:{0}, port:{1}", host, port);
+		SocketAddress socketAddress = InetSocketAddress.createUnresolved(host, port);
+		Logger.log(getClass(), LogLevel.TRACE, "socketAddress:{0}", socketAddress);
+		return new Proxy(type, socketAddress);
 	}
 	
 }

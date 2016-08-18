@@ -60,7 +60,7 @@ public class RhinoPacScriptParser extends ScriptableObject implements PacScriptP
         try {
             defineFunctionProperties(JS_FUNCTION_NAMES, RhinoPacScriptParser.class, ScriptableObject.DONTENUM);
         } catch (Exception e) {
-            Logger.log(getClass(), LogLevel.ERROR, "JS Engine setup error.", e);
+            Logger.log(getClass(), LogLevel.ERROR, "JS Engine setup error:{0}.", e);
             throw new ProxyEvaluationException(e.getMessage(), e);
         }
 
@@ -101,7 +101,7 @@ public class RhinoPacScriptParser extends ScriptableObject implements PacScriptP
                 Context.exit();
             }
         } catch (Exception e) {
-            Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error.", e);
+            Logger.log(getClass(), LogLevel.ERROR, "JS evaluation error:{0}.", e);
             throw new ProxyEvaluationException(
                     "Error while executing PAC script: " + e.getMessage(), e);
         }

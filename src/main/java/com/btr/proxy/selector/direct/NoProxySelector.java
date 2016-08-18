@@ -44,7 +44,6 @@ public class NoProxySelector extends ProxySelector {
 	 * connectFailed
 	 * @see java.net.ProxySelector#connectFailed(java.net.URI, java.net.SocketAddress, java.io.IOException)
 	 ************************************************************************/
-
 	@Override
 	public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 		// Not used.
@@ -54,17 +53,9 @@ public class NoProxySelector extends ProxySelector {
 	 * select
 	 * @see java.net.ProxySelector#select(java.net.URI)
 	 ************************************************************************/
-
 	@Override
 	public List<Proxy> select(URI uri) {
 		return ProxyUtil.noProxyList();
 	}
 
 }
-
-
-
-
-/*
- * $Log: $
- */

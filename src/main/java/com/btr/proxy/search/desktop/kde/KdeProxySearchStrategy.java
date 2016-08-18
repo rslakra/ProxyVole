@@ -124,7 +124,7 @@ public class KdeProxySearchStrategy implements ProxySearchStrategy {
 		try {
 			return  this.settingsParser.parseSettings();
 		} catch (IOException e) {
-			Logger.log(getClass(), LogLevel.ERROR, "Can't parse settings.", e);
+			Logger.log(getClass(), LogLevel.ERROR, "Can't parse settings. error:{0}", e);
 			throw new ProxyException(e);
 		}
 	}
