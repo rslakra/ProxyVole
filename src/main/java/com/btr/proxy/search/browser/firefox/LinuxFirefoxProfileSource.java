@@ -8,14 +8,15 @@ import com.btr.proxy.util.Logger.LogLevel;
 
 /*****************************************************************************
  * Searches for Firefox profile on an Linux / Unix base system.
- * This will scan the <i>.mozilla</i> folder in the users home directory to find the 
- * profiles. 
+ * This will scan the <i>.mozilla</i> folder in the users home directory to find
+ * the
+ * profiles.
  *
  * @author Bernd Rosstauscher (proxyvole@rosstauscher.de) Copyright 2009
  ****************************************************************************/
 
 class LinuxFirefoxProfileSource implements FirefoxProfileSource {
-
+	
 	/*************************************************************************
 	 * Get profile folder for the Linux Firefox profile
 	 ************************************************************************/
@@ -46,5 +47,5 @@ class LinuxFirefoxProfileSource implements FirefoxProfileSource {
 		Logger.log(getClass(), LogLevel.TRACE, "Firefox settings folder is {0}", profiles[0]);
 		return profiles[0];
 	}
-
+	
 }

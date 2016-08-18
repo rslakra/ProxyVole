@@ -18,7 +18,7 @@ import com.btr.proxy.util.Logger.LogLevel;
  ****************************************************************************/
 
 class FirefoxSettingParser {
-
+	
 	/*************************************************************************
 	 * Constructor
 	 ************************************************************************/
@@ -29,6 +29,7 @@ class FirefoxSettingParser {
 	
 	/*************************************************************************
 	 * Parse the settings file and extract all network.proxy.* settings from it.
+	 * 
 	 * @param source of the Firefox profiles.
 	 * @return the parsed properties.
 	 * @throws IOException on read error.
@@ -41,31 +42,28 @@ class FirefoxSettingParser {
 		File settingsFile = new File(profileFolder, "prefs.js");
 		Logger.log(getClass(), LogLevel.TRACE, "parseSettings settingsFile:{0}", settingsFile);
 		
-		BufferedReader fin = new BufferedReader(
-				new InputStreamReader(
-					new FileInputStream(settingsFile)));
-
+		BufferedReader fin = new BufferedReader(new InputStreamReader(new FileInputStream(settingsFile)));
 		Properties result = new Properties();
 		try {
 			String line = fin.readLine();
-			while (line != null) {
+			while(line != null) {
 				line = line.trim();
-				if (line.startsWith("user_pref(\"network.proxy")) {
-					line = line.substring(10, line.length()-2);
+				if(line.startsWith("user_pref(\"network.proxy")) {
+					line = line.substring(10, line.length() - 2);
 					int index = line.indexOf(",");
 					String key = line.substring(0, index).trim();
-					if (key.startsWith("\"")) {
+					if(key.startsWith("\"")) {
 						key = key.substring(1);
 					}
-					if (key.endsWith("\"")) {
-						key = key.substring(0, key.length()-1);
+					if(key.endsWith("\"")) {
+						key = key.substring(0, key.length() - 1);
 					}
-					String value = line.substring(index+1).trim();
-					if (value.startsWith("\"")) {
+					String value = line.substring(index + 1).trim();
+					if(value.startsWith("\"")) {
 						value = value.substring(1);
 					}
-					if (value.endsWith("\"")) {
-						value = value.substring(0, value.length()-1);
+					if(value.endsWith("\"")) {
+						value = value.substring(0, value.length() - 1);
 					}
 					result.put(key, value);
 				}
@@ -74,10 +72,9 @@ class FirefoxSettingParser {
 		} finally {
 			fin.close();
 		}
-
+		
 		Logger.log(getClass(), LogLevel.TRACE, "parseSettings result:{0}", result);
 		return result;
 	}
-	
 	
 }
