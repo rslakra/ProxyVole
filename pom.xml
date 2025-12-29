@@ -93,12 +93,13 @@ The library provides some proxy setting search strategies to read the proxy sett
   </build>
   
   <dependencies>
-  	<dependency>
-  		<groupId>org.mozilla</groupId>
-  		<artifactId>rhino</artifactId>
-  		<version>1.7.14.1</version>
-  		<optional>true</optional>
-  	</dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.mozilla/rhino -->
+    <dependency>
+        <groupId>org.mozilla</groupId>
+        <artifactId>rhino</artifactId>
+        <version>1.9.0</version>
+    </dependency>    
 
   	<dependency>
   		<groupId>junit</groupId>
