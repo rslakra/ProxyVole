@@ -1,6 +1,9 @@
 package com.btr.proxy.util;
 
+import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -90,6 +93,55 @@ public class ProxyUtil {
 		}
 		
 		return pacProxySelector;
+	}
+	
+	/*************************************************************************
+	 * Logs proxy selection information at INFO level.
+	 * This utility method provides consistent logging format across all proxy selectors.
+	 * 
+	 * @param clazz the class that is logging (used for logger context)
+	 * @param uri the URI for which the proxy was selected
+	 * @param proxies the list of proxies selected (may be empty or null)
+	 * @param context optional context string (e.g., "protocol: https", "PAC script", etc.)
+	 *                Can be null if no additional context is needed.
+	 ************************************************************************/
+	public static void logProxySelection(Class<?> clazz, URI uri, List<Proxy> proxies, String context) {
+		if (proxies == null || proxies.isEmpty()) {
+			String message = "Request to {0}";
+			if (context != null && !context.isEmpty()) {
+				message += " (" + context + ")";
+			}
+			message += " will be sent DIRECT (no proxy)";
+			Logger.log(clazz, LogLevel.INFO, message, uri);
+			return;
+		}
+		
+		Proxy selectedProxy = proxies.get(0);
+		if (selectedProxy == null || selectedProxy == Proxy.NO_PROXY) {
+			String message = "Request to {0}";
+			if (context != null && !context.isEmpty()) {
+				message += " (" + context + ")";
+			}
+			message += " will be sent DIRECT (no proxy)";
+			Logger.log(clazz, LogLevel.INFO, message, uri);
+			return;
+		}
+		
+		SocketAddress address = selectedProxy.address();
+		String message = "Request to {0}";
+		if (context != null && !context.isEmpty()) {
+			message += " (" + context + ")";
+		}
+		
+		if (address instanceof InetSocketAddress) {
+			InetSocketAddress inetAddr = (InetSocketAddress) address;
+			message += " will be sent via proxy: {1}://{2}:{3}";
+			Logger.log(clazz, LogLevel.INFO, message, 
+				uri, selectedProxy.type(), inetAddr.getHostString(), inetAddr.getPort());
+		} else {
+			message += " will be sent via proxy: {1}";
+			Logger.log(clazz, LogLevel.INFO, message, uri, selectedProxy);
+		}
 	}
 	
 }

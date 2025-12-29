@@ -7,6 +7,8 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
 import com.btr.proxy.util.ProxyUtil;
 
 /*****************************************************************************
@@ -59,6 +61,7 @@ public class NoProxySelector extends ProxySelector {
 	 ************************************************************************/
 	@Override
 	public List<Proxy> select(URI uri) {
+		ProxyUtil.logProxySelection(getClass(), uri, ProxyUtil.noProxyList(), "no proxy configured");
 		return ProxyUtil.noProxyList();
 	}
 	

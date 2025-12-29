@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.btr.proxy.selector.direct.NoProxySelector;
+import com.btr.proxy.util.ProxyUtil;
 
 /*****************************************************************************
  * This is a facade for a list of ProxySelecor objects. You can register 
@@ -108,7 +109,13 @@ public class ProtocolDispatchSelector extends ProxySelector {
 		if (protocol != null && this.selectors.get(protocol) != null) {
 			selector = this.selectors.get(protocol);
 		}
-		return selector.select(uri);
+
+		List<Proxy> proxies = selector.select(uri);		
+		// Log the selected proxy information
+		String context = protocol != null ? "protocol: " + protocol : "protocol: unknown";
+		ProxyUtil.logProxySelection(getClass(), uri, proxies, context);
+		
+		return proxies;
 	}
 
 }

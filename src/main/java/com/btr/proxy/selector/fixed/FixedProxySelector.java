@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.btr.proxy.util.Logger;
 import com.btr.proxy.util.Logger.LogLevel;
+import com.btr.proxy.util.ProxyUtil;
 
 /*****************************************************************************
  * This proxy selector is configured with a fixed proxy. This proxy will be
@@ -69,6 +70,7 @@ public class FixedProxySelector extends ProxySelector {
 	
 	@Override
 	public List<Proxy> select(URI uri) {
+		ProxyUtil.logProxySelection(getClass(), uri, this.proxyList, null);
 		return this.proxyList;
 	}
 	

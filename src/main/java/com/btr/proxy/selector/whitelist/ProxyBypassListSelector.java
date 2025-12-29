@@ -7,6 +7,8 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.util.List;
 
+import com.btr.proxy.util.Logger;
+import com.btr.proxy.util.Logger.LogLevel;
 import com.btr.proxy.util.ProxyUtil;
 import com.btr.proxy.util.UriFilter;
 
@@ -74,6 +76,8 @@ public class ProxyBypassListSelector extends ProxySelector {
 		// If in white list, use DIRECT connection. 
 		for (UriFilter filter : this.whiteListFilter) {
 			if (filter.accept(uri)) {
+				Logger.log(getClass(), LogLevel.INFO, 
+					"Request to {0} matches bypass list, will be sent DIRECT (no proxy)", uri);
 				return ProxyUtil.noProxyList();
 			}
 		}

@@ -140,6 +140,10 @@ public class PacProxySelector extends ProxySelector {
 			}
 			
 			Logger.log(getClass(), LogLevel.TRACE, "proxies:{0}", proxies);
+			
+			// Log the selected proxy information at INFO level
+			ProxyUtil.logProxySelection(getClass(), uri, proxies, "PAC script");
+			
 			return proxies;
 		} catch(ProxyEvaluationException e) {
 			Logger.log(getClass(), LogLevel.ERROR, "PAC resolving error:{0}.", e);
