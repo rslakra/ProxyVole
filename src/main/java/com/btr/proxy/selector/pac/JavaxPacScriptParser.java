@@ -52,6 +52,10 @@ public class JavaxPacScriptParser implements PacScriptParser {
 	private ScriptEngine setupEngine() throws ProxyEvaluationException {
 		ScriptEngineManager mng = new ScriptEngineManager();
 		ScriptEngine engine = mng.getEngineByMimeType("text/javascript");
+		if (engine == null) {
+			// Nashorn was removed in JDK 15+, so JavaScript engine is not available
+			throw new ProxyEvaluationException("JavaScript engine (Nashorn) is not available. Nashorn was removed in JDK 15+. Use RhinoPacScriptParser instead.");
+		}
 		engine.put(SCRIPT_METHODS_OBJECT, new PacScriptMethods());
 		
 		Class<?> scriptMethodsClazz = ScriptMethods.class;

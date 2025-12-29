@@ -4,8 +4,12 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Calendar;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,6 +23,17 @@ import com.btr.proxy.util.ProxyException;
  ****************************************************************************/
 
 public class JavaxPacScriptParserTest {
+	
+	/*************************************************************************
+	 * Check if JavaScript engine (Nashorn) is available.
+	 * Nashorn was removed in JDK 15+, so this will return false on JDK 21+.
+	 * @return true if JavaScript engine is available, false otherwise.
+	 ************************************************************************/
+	private static boolean isJavaScriptEngineAvailable() {
+		ScriptEngineManager mng = new ScriptEngineManager();
+		ScriptEngine engine = mng.getEngineByMimeType("text/javascript");
+		return engine != null;
+	}
 	
 	/*************************************************************************
 	 * Set calendar for date and time base tests.
@@ -55,6 +70,7 @@ public class JavaxPacScriptParserTest {
 	 ************************************************************************/
 	@Test
 	public void testScriptExecution() throws ProxyException, MalformedURLException {
+		Assume.assumeTrue("JavaScript engine (Nashorn) is not available in JDK 15+", isJavaScriptEngineAvailable());
 		PacScriptParser p = new JavaxPacScriptParser(new UrlPacScriptSource(toUrl("test1.pac")));
 		p.evaluate(TestUtil.HTTP_TEST_URI.toString(), "host1.unit-test.invalid");
 	}
@@ -66,6 +82,7 @@ public class JavaxPacScriptParserTest {
 	 ************************************************************************/
 	@Test
 	public void testCommentsInScript() throws ProxyException, MalformedURLException {
+		Assume.assumeTrue("JavaScript engine (Nashorn) is not available in JDK 15+", isJavaScriptEngineAvailable());
 		PacScriptParser p = new JavaxPacScriptParser(new UrlPacScriptSource(toUrl("test2.pac")));
 		p.evaluate(TestUtil.HTTP_TEST_URI.toString(), "host1.unit-test.invalid");
 	}
@@ -113,6 +130,7 @@ public class JavaxPacScriptParserTest {
 	 ************************************************************************/
 	@Test
 	public void methodsShouldReturnJsStrings() throws ProxyException, MalformedURLException {
+		Assume.assumeTrue("JavaScript engine (Nashorn) is not available in JDK 15+", isJavaScriptEngineAvailable());
 		PacScriptParser p = new JavaxPacScriptParser(new UrlPacScriptSource(toUrl("testReturnTypes.pac")));
 		String actual = p.evaluate(TestUtil.HTTP_TEST_URI.toString(), "host1.unit-test.invalid");
 		Assert.assertEquals("number boolean string", actual);

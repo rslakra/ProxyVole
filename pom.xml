@@ -4,29 +4,72 @@
   <artifactId>proxy_vole</artifactId>
   <version>1.0.1-SNAPSHOT</version>
   <name>proxy-vole</name>
-  <description>A Java library to auto detect the platform network proxy settings. 
+  <description>A Java library to auto-detect the platform network proxy settings.
 
-The library provides some proxy setting search strategies to read the proxy settings from the system config (Windows, KDE, Gnome, OSX), browser config (Firefox, IE), or environment variables, ... and provides you an ready to use proxy selector. </description>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
+The library provides some proxy setting search strategies to read the proxy settings from the system config (Windows, KDE, Gnome, OSX), browser config (Firefox, IE), or environment variables, ... and provides you an ready to use proxy selector.
+</description>
+
+  <!-- properties -->
+    <properties>
+        <!-- revision -->
+        <revision>0.0.0</revision>
+
+        <!-- sourceEncoding & outputEncoding -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- java version -->
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+
+        <!-- maven plugins -->
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-checkstyle-plugin.version>3.5.0</maven-checkstyle-plugin.version>
+        <maven-release-plugin.version>3.1.1</maven-release-plugin.version>
+
+        <!-- checkstyle -->
+        <code-styles.dir>https://raw.githubusercontent.com/rslakra/code-styles/master</code-styles.dir>
+        <checkstyle.threshold>0</checkstyle.threshold>
+
+        <!-- lombok -->
+        <lombok.version>1.18.34</lombok.version>
+
+        <!-- mainClassPath -->
+        <mainClassPath></mainClassPath>
+
+        <!-- junit-jupiter-params -->
+        <junit-jupiter-params.version>5.10.2</junit-jupiter-params.version>
+
+    </properties>
   
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>21</source>
+          <target>21</target>
+          <release>21</release>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.6.3</version>
         <configuration>
           <!--stylesheetfile>resources/misc/stylesheet.css</stylesheetfile-->
         </configuration>
       </plugin>
       
       <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.3.0</version>
         <configuration>
           <includes>
             <include>**/*.java</include>
@@ -38,7 +81,7 @@ The library provides some proxy setting search strategies to read the proxy sett
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.4.0</version>
         <configuration>
           <archive>
             <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
@@ -53,13 +96,14 @@ The library provides some proxy setting search strategies to read the proxy sett
   	<dependency>
   		<groupId>org.mozilla</groupId>
   		<artifactId>rhino</artifactId>
-  		<version>1.7R4</version>
+  		<version>1.7.14</version>
   		<optional>true</optional>
   	</dependency>
+
   	<dependency>
   		<groupId>junit</groupId>
   		<artifactId>junit</artifactId>
-  		<version>4.13.1</version>
+  		<version>4.13.2</version>
   	</dependency>
   </dependencies>
 </project>

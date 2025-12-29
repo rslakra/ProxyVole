@@ -118,7 +118,7 @@ public class DHCPOptions {
 	 */
 	
 	public void removeOption(byte entryCode) {
-		this.optionsTable.remove(new Byte(entryCode));
+		this.optionsTable.remove(Byte.valueOf(entryCode));
 	}
 	
 	/**
@@ -128,7 +128,7 @@ public class DHCPOptions {
 	 * @return true if option is set, otherwise false
 	 */
 	public boolean contains(byte entryCode) {
-		return this.optionsTable.containsKey(new Byte(entryCode));
+		return this.optionsTable.containsKey(Byte.valueOf(entryCode));
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class DHCPOptions {
 	 */
 	public byte[] getOption(byte entryCode) {
 		if(this.contains(entryCode)) {
-			DHCPOptionsEntry ent = this.optionsTable.get(new Byte(entryCode));
+			DHCPOptionsEntry ent = this.optionsTable.get(Byte.valueOf(entryCode));
 			return ent.content;
 		} else {
 			return null;
@@ -164,7 +164,7 @@ public class DHCPOptions {
 	 */
 	public void setOption(byte entryCode, byte value[]) {
 		DHCPOptionsEntry opt = new DHCPOptionsEntry(entryCode, (byte) value.length, value);
-		this.optionsTable.put(new Byte(entryCode), opt);
+		this.optionsTable.put(Byte.valueOf(entryCode), opt);
 	}
 	
 	/**
